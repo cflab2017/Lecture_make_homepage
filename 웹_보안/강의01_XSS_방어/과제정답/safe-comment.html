@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>XSS 방어 댓글 — 과제 정답</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        .field { margin-bottom: 12px; }
+        label { display: block; font-weight: bold; margin-bottom: 4px; }
+        input, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        textarea { height: 80px; resize: vertical; }
+        button { padding: 8px 16px; background: #2e7d32; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .comment-item { border: 1px solid #ddd; padding: 10px; margin: 8px 0; border-radius: 6px; background: white; }
+        .comment-name  { font-weight: bold; color: #333; }
+        .comment-text  { color: #555; white-space: pre-wrap; word-break: break-word; }
+    </style>
+</head>
+<body>
+    <h1>안전한 댓글 (XSS 방어)</h1>
+
+    <div class="field">
+        <label for="name">이름</label>
+        <input type="text" id="name" placeholder="이름을 입력하세요" maxlength="50">
+    </div>
+    <div class="field">
+        <label for="comment">댓글</label>
+        <textarea id="comment" placeholder="댓글을 입력하세요" maxlength="500"></textarea>
+    </div>
+    <button onclick="addComment()">댓글 등록</button>
+
+    <h2>댓글 목록</h2>
+    <div id="comment-list"></div>
+
+    <script>
+        // ─────────────────────────────────────────
+        // 방어법 1: HTML 이스케이프 함수
+        // HTML 특수문자를 엔티티로 변환하여 스크립트 실행 방지
+        // <script> → &lt;script&gt; 처럼 변환하면 태그로 인식되지 않음
+        // ─────────────────────────────────────────
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g,  '&amp;')   // & 먼저 처리 (순서 중요!)
+                .replace(/</g,  '&lt;')    // 여는 태그 차단 — XSS 핵심 방어
+                .replace(/>/g,  '&gt;')    // 닫는 태그 차단
+                .replace(/"/g,  '&quot;')  // 속성값 내 따옴표 차단
+                .replace(/'/g,  '&#x27;'); // 속성값 내 작은따옴표 차단
+        }
+
+        function addComment() {
+            const name    = document.getElementById('name').value.trim();
+            const comment = document.getElementById('comment').value.trim();
+
+            // 필수 입력 확인
+            if (!name || !comment) {
+                alert('이름과 댓글을 모두 입력해주세요.');
+                return;
+            }
+
+            const container = document.getElementById('comment-list');
+
+            // ─────────────────────────────────────────
+            // 방어법 2: DOM API로 요소 생성 + textContent 사용
+            // createElement + textContent는 HTML을 파싱하지 않음
+            // 어떤 입력이 와도 무조건 텍스트로만 처리됨
+            //
+            // 장점: 이스케이프 함수 없이도 안전
+            // 단점: innerHTML보다 코드가 길어짐
+            // ─────────────────────────────────────────
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'comment-name';
+            // ✓ textContent: HTML 파싱 없음 → <script>도 그냥 텍스트
+            nameEl.textContent = name;
+
+            const textEl = document.createElement('div');
+            textEl.className = 'comment-text';
+            // ✓ 어떤 페이로드가 와도 텍스트로만 표시됨
+            textEl.textContent = comment;
+
+            item.appendChild(nameEl);
+            item.appendChild(textEl);
+
+            // 최신 댓글이 위에 오도록 prepend (insertBefore 활용)
+            container.insertBefore(item, container.firstChild);
+
+            // ─────────────────────────────────────────
+            // [참고] 방어법 3: innerHTML + 이스케이프 조합
+            // textContent 대신 innerHTML을 꼭 써야 한다면
+            // escapeHtml()로 모든 값을 처리한 후 삽입
+            // ─────────────────────────────────────────
+            // const item2 = document.createElement('div');
+            // item2.innerHTML = `
+            //     <div class="comment-name">${escapeHtml(name)}</div>
+            //     <div class="comment-text">${escapeHtml(comment)}</div>
+            // `;
+            // → 이스케이프된 값만 들어가므로 안전
+
+            // 입력 초기화
+            document.getElementById('name').value    = '';
+            document.getElementById('comment').value = '';
+            document.getElementById('comment').focus();
+        }
+    </script>
+</body>
+</html>
