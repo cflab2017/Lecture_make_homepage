@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과제 07 정답 — 계산기 UI</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px 0;
+      background: #1a1a2e;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    /* 계산기 외부 컨테이너 */
+    .calculator {
+      width: 320px;
+      background: #16213e;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    /* 화면 영역 */
+    .display {
+      padding: 20px 24px 15px;
+      background: #0f3460;
+      text-align: right;
+    }
+    /* 이전 식 표시 (작은 텍스트) */
+    .expression {
+      font-size: 14px;
+      color: #718096;
+      min-height: 20px;
+      word-break: break-all;
+      margin-bottom: 5px;
+    }
+    /* 현재 숫자 표시 */
+    .current-num {
+      font-size: 42px;
+      font-weight: 300;
+      color: white;
+      word-break: break-all;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    /* 버튼 그리드 */
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #0a0a1a;
+    }
+    /* 각 버튼 */
+    .btn {
+      padding: 0;
+      height: 75px;
+      font-size: 22px;
+      border: none;
+      cursor: pointer;
+      transition: filter 0.1s;
+      font-family: inherit;
+    }
+    .btn:active { filter: brightness(0.8); }
+    /* 회색 버튼 (C, ±, %) */
+    .btn-gray { background: #4a5568; color: white; }
+    /* 주황 버튼 (연산자, =) */
+    .btn-orange { background: #e67e22; color: white; font-size: 26px; }
+    .btn-orange.active-op { background: white; color: #e67e22; }
+    /* 어두운 버튼 (숫자) */
+    .btn-dark { background: #2d3748; color: white; }
+    /* 0 버튼 (2칸 차지) */
+    .btn-zero {
+      grid-column: span 2;
+      text-align: left;
+      padding-left: 28px;
+    }
+    /* 키보드 활성화 표시 */
+    .btn.key-active { filter: brightness(0.7); }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+
+  <!-- 화면 영역 -->
+  <div class="display">
+    <div class="expression" id="expression"></div>
+    <div class="current-num" id="currentNum">0</div>
+  </div>
+
+  <!-- 버튼 그리드: 이벤트 위임을 위해 컨테이너에 이벤트 등록 -->
+  <div class="btn-grid" id="btnGrid">
+
+    <!-- 1행: C ± % ÷ -->
+    <button class="btn btn-gray" data-value="C">C</button>
+    <button class="btn btn-gray" data-value="±">±</button>
+    <button class="btn btn-gray" data-value="%">%</button>
+    <button class="btn btn-orange" data-value="÷">÷</button>
+
+    <!-- 2행: 7 8 9 × -->
+    <button class="btn btn-dark" data-value="7">7</button>
+    <button class="btn btn-dark" data-value="8">8</button>
+    <button class="btn btn-dark" data-value="9">9</button>
+    <button class="btn btn-orange" data-value="×">×</button>
+
+    <!-- 3행: 4 5 6 − -->
+    <button class="btn btn-dark" data-value="4">4</button>
+    <button class="btn btn-dark" data-value="5">5</button>
+    <button class="btn btn-dark" data-value="6">6</button>
+    <button class="btn btn-orange" data-value="−">−</button>
+
+    <!-- 4행: 1 2 3 + -->
+    <button class="btn btn-dark" data-value="1">1</button>
+    <button class="btn btn-dark" data-value="2">2</button>
+    <button class="btn btn-dark" data-value="3">3</button>
+    <button class="btn btn-orange" data-value="+">+</button>
+
+    <!-- 5행: 0(2칸) . = -->
+    <button class="btn btn-dark btn-zero" data-value="0">0</button>
+    <button class="btn btn-dark" data-value=".">.</button>
+    <button class="btn btn-orange" data-value="=">=</button>
+
+  </div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  // 계산기 상태 변수
+  // ─────────────────────────────────────────
+  let currentDisplay = '0';  // 화면에 표시되는 현재 숫자 문자열
+  let previousValue = null;  // 이전 피연산자 (숫자)
+  let operator = null;       // 선택된 연산자 문자열
+  let shouldReset = false;   // 다음 숫자 입력 시 화면 초기화 여부
+  let expressionStr = '';    // 이전 식 표시용 문자열
+
+  // ─────────────────────────────────────────
+  // DOM 요소 참조
+  // ─────────────────────────────────────────
+  const currentNumEl = document.getElementById('currentNum');
+  const expressionEl = document.getElementById('expression');
+
+  // ─────────────────────────────────────────
+  // 화면 업데이트 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 현재 숫자와 식을 화면에 표시하는 함수
+   * @param {string} num - 표시할 숫자 문자열
+   * @param {string} expr - 표시할 식 문자열
+   */
+  function updateDisplay(num, expr = expressionStr) {
+    currentNumEl.textContent = num;
+    expressionEl.textContent = expr;
+
+    // 글자 수에 따라 폰트 크기 자동 조절
+    const len = num.length;
+    if (len > 12)      currentNumEl.style.fontSize = '22px';
+    else if (len > 9)  currentNumEl.style.fontSize = '30px';
+    else if (len > 6)  currentNumEl.style.fontSize = '36px';
+    else               currentNumEl.style.fontSize = '42px';
+  }
+
+  // ─────────────────────────────────────────
+  // 입력 처리 메인 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 버튼 값 또는 키보드 입력을 처리하는 메인 함수
+   * @param {string} value - 처리할 값 (숫자, 연산자, 특수 버튼)
+   */
+  function handleInput(value) {
+    // 숫자 버튼 (0~9)
+    if ('0123456789'.includes(value)) {
+      handleNumber(value);
+      return;
+    }
+
+    // 소수점
+    if (value === '.') {
+      handleDecimal();
+      return;
+    }
+
+    // 연산자 (+, −, ×, ÷)
+    if (['+', '−', '×', '÷'].includes(value)) {
+      handleOperator(value);
+      return;
+    }
+
+    // 특수 버튼 처리
+    switch (value) {
+      case '=': handleEquals(); break;
+      case 'C': handleClear(); break;
+      case '±': handleToggleSign(); break;
+      case '%': handlePercent(); break;
+      case 'Backspace': handleBackspace(); break;
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // 각 입력 유형별 처리 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 숫자 버튼 처리 함수
+   * @param {string} num - 입력된 숫자 문자열
+   */
+  function handleNumber(num) {
+    if (shouldReset) {
+      // 연산자 선택 후 새 숫자 입력 시 화면 초기화
+      currentDisplay = num;
+      shouldReset = false;
+    } else {
+      // 화면이 '0'이면 덮어쓰기, 아니면 뒤에 추가
+      if (currentDisplay === '0') {
+        currentDisplay = num;
+      } else {
+        // 최대 자릿수 제한 (12자리)
+        if (currentDisplay.length < 12) {
+          currentDisplay += num;
+        }
+      }
+    }
+    updateDisplay(currentDisplay);
+  }
+
+  /**
+   * 소수점 처리 함수 (중복 입력 방지)
+   */
+  function handleDecimal() {
+    if (shouldReset) {
+      currentDisplay = '0.';
+      shouldReset = false;
+    } else if (!currentDisplay.includes('.')) {
+      // 이미 소수점이 없을 때만 추가
+      currentDisplay += '.';
+    }
+    updateDisplay(currentDisplay);
+  }
+
+  /**
+   * 연산자 처리 함수
+   * @param {string} op - 선택된 연산자
+   */
+  function handleOperator(op) {
+    const current = parseFloat(currentDisplay);
+
+    // 이미 이전 값과 연산자가 있으면 먼저 계산
+    if (previousValue !== null && !shouldReset) {
+      const result = calculate(previousValue, current, operator);
+      currentDisplay = formatResult(result);
+      updateDisplay(currentDisplay);
+      previousValue = result;
+    } else {
+      previousValue = current; // 현재 값을 이전 값으로 저장
+    }
+
+    operator = op; // 선택된 연산자 저장
+    shouldReset = true; // 다음 숫자 입력 시 화면 초기화
+
+    // 이전 식 표시 업데이트
+    expressionStr = `${currentDisplay} ${op}`;
+    updateDisplay(currentDisplay, expressionStr);
+
+    // 선택된 연산자 버튼 강조 표시
+    highlightOperator(op);
+  }
+
+  /**
+   * = 버튼 처리 함수 (계산 실행)
+   */
+  function handleEquals() {
+    if (operator === null || previousValue === null) return;
+
+    const current = parseFloat(currentDisplay);
+
+    // 0으로 나누기 예외 처리
+    if (operator === '÷' && current === 0) {
+      updateDisplay('오류', `${previousValue} ${operator} 0 =`);
+      reset();
+      return;
+    }
+
+    // 계산 실행
+    const result = calculate(previousValue, current, operator);
+
+    // 식 문자열 업데이트
+    expressionStr = `${previousValue} ${operator} ${current} =`;
+    currentDisplay = formatResult(result);
+
+    updateDisplay(currentDisplay, expressionStr);
+
+    // 상태 초기화
+    previousValue = null;
+    operator = null;
+    shouldReset = true;
+
+    // 연산자 버튼 강조 해제
+    document.querySelectorAll('.btn-orange').forEach(btn => {
+      btn.classList.remove('active-op');
+    });
+  }
+
+  /**
+   * C 버튼 처리 함수 (전체 초기화)
+   */
+  function handleClear() {
+    currentDisplay = '0';
+    expressionStr = '';
+    reset();
+    updateDisplay('0', '');
+  }
+
+  /**
+   * ± 버튼 처리 함수 (부호 전환)
+   */
+  function handleToggleSign() {
+    const num = parseFloat(currentDisplay);
+    currentDisplay = formatResult(-num);
+    updateDisplay(currentDisplay);
+  }
+
+  /**
+   * % 버튼 처리 함수 (퍼센트 변환)
+   */
+  function handlePercent() {
+    const num = parseFloat(currentDisplay);
+    currentDisplay = formatResult(num / 100);
+    updateDisplay(currentDisplay);
+  }
+
+  /**
+   * Backspace 처리 함수 (마지막 글자 삭제)
+   */
+  function handleBackspace() {
+    if (shouldReset) return; // 계산 직후에는 동작 안 함
+    if (currentDisplay.length === 1 || (currentDisplay.length === 2 && currentDisplay.startsWith('-'))) {
+      currentDisplay = '0';
+    } else {
+      currentDisplay = currentDisplay.slice(0, -1); // 마지막 글자 제거
+    }
+    updateDisplay(currentDisplay);
+  }
+
+  // ─────────────────────────────────────────
+  // 계산 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 두 숫자와 연산자로 계산 결과를 반환하는 순수 함수
+   * @param {number} a - 첫 번째 피연산자
+   * @param {number} b - 두 번째 피연산자
+   * @param {string} op - 연산자
+   * @returns {number} 계산 결과
+   */
+  function calculate(a, b, op) {
+    switch (op) {
+      case '+':  return a + b;
+      case '−':  return a - b;
+      case '×':  return a * b;
+      case '÷':  return a / b;
+      default:   return b;
+    }
+  }
+
+  /**
+   * 계산 결과를 화면 표시에 적합한 문자열로 변환하는 함수
+   * @param {number} num - 변환할 숫자
+   * @returns {string} 문자열 형태의 숫자
+   */
+  function formatResult(num) {
+    if (!isFinite(num)) return '오류'; // 무한대 처리
+    // 소수점 이하 최대 10자리, 불필요한 0 제거
+    return parseFloat(num.toFixed(10)).toString();
+  }
+
+  /**
+   * 상태 변수를 초기화하는 헬퍼 함수
+   */
+  function reset() {
+    previousValue = null;
+    operator = null;
+    shouldReset = false;
+    document.querySelectorAll('.btn-orange').forEach(btn => {
+      btn.classList.remove('active-op');
+    });
+  }
+
+  /**
+   * 선택된 연산자 버튼을 강조하는 함수
+   * @param {string} op - 강조할 연산자
+   */
+  function highlightOperator(op) {
+    // 모든 연산자 버튼에서 강조 제거
+    document.querySelectorAll('.btn-orange').forEach(btn => {
+      btn.classList.remove('active-op');
+    });
+    // 선택된 연산자 버튼 강조 (이벤트 위임 없이 직접 선택)
+    const activeBtn = document.querySelector(`.btn-orange[data-value="${op}"]`);
+    if (activeBtn) activeBtn.classList.add('active-op');
+  }
+
+  // ─────────────────────────────────────────
+  // 이벤트 위임: 버튼 클릭 처리
+  // ─────────────────────────────────────────
+
+  /**
+   * 버튼 그리드에 이벤트 위임을 설정
+   * 각 버튼에 개별 이벤트를 등록하는 대신 부모 컨테이너에 한 번만 등록
+   */
+  document.getElementById('btnGrid').addEventListener('click', function(event) {
+    // event.target: 실제 클릭된 요소
+    const btn = event.target.closest('.btn');
+    if (!btn) return; // 버튼이 아닌 영역 클릭 무시
+
+    // dataset.value로 버튼 값 읽기
+    const value = btn.dataset.value;
+    if (value) handleInput(value);
+  });
+
+  // ─────────────────────────────────────────
+  // 키보드 이벤트 처리
+  // ─────────────────────────────────────────
+
+  /**
+   * 키보드 입력을 계산기 버튼 값으로 매핑하여 처리하는 이벤트 핸들러
+   */
+  document.addEventListener('keydown', function(event) {
+    // 기본 동작 방지 (예: '/' 키가 브라우저 검색창을 여는 것)
+    event.preventDefault();
+
+    const key = event.key;
+
+    // 키 매핑 객체: 키보드 키 → 계산기 값
+    const keyMap = {
+      '*': '×',
+      '/': '÷',
+      '-': '−',
+      'Enter': '=',
+      'Escape': 'C',
+    };
+
+    // 매핑된 값이 있으면 사용, 없으면 원래 키 사용
+    const value = keyMap[key] || key;
+
+    // 유효한 입력인지 확인 후 처리
+    const validInputs = '0123456789.+-−×÷=C%±Backspace';
+    if (validInputs.includes(value) || value === 'Backspace' || value === 'Escape') {
+      handleInput(value === 'Escape' ? 'C' : value);
+
+      // 키보드 버튼 시각적 피드백 (잠깐 어두워짐)
+      const btn = document.querySelector(`.btn[data-value="${value}"]`);
+      if (btn) {
+        btn.classList.add('key-active');
+        setTimeout(() => btn.classList.remove('key-active'), 100);
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

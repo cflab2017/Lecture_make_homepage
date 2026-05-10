@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과제 06 정답 — 색상 팔레트 생성기</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 750px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #1a1a2e;
+      color: white;
+    }
+    h1 { text-align: center; color: white; margin-bottom: 30px; }
+    /* 상단 컨트롤 */
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    .generate-btn {
+      flex: 1;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .generate-btn:hover { opacity: 0.9; }
+    .generate-btn:active { transform: scale(0.98); }
+    .count-btn {
+      padding: 14px 20px;
+      background: #16213e;
+      color: #a0aec0;
+      border: 1px solid #2d3748;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .count-btn:hover { background: #2d3748; }
+    /* 팔레트 그리드 */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+      min-height: 120px;
+    }
+    /* 색상 박스 */
+    .color-box {
+      height: 100px;
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
+    }
+    .color-box:hover { transform: scale(1.05); }
+    /* 선택된 박스 */
+    .color-box.selected {
+      outline: 4px solid white;
+      outline-offset: 2px;
+      transform: scale(1.08);
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+    /* 박스 내 HEX 텍스트 */
+    .hex-label {
+      font-size: 11px;
+      font-weight: bold;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    /* 호버 시 HEX 텍스트 표시 */
+    .color-box:hover .hex-label { opacity: 1; }
+    /* 삭제 버튼 */
+    .box-delete {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 22px;
+      height: 22px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .color-box:hover .box-delete { opacity: 1; }
+    .box-delete:hover { background: rgba(231,76,60,0.8); }
+    /* 선택된 색상 정보 패널 */
+    .color-info {
+      background: #16213e;
+      border-radius: 12px;
+      padding: 20px 25px;
+      display: none; /* 처음에는 숨김 */
+      align-items: center;
+      gap: 20px;
+      border: 1px solid #2d3748;
+    }
+    /* 선택된 색상 미리보기 */
+    .selected-preview {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .color-details { flex: 1; }
+    .hex-display {
+      font-size: 28px;
+      font-weight: bold;
+      font-family: monospace;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .hex-display:hover { opacity: 0.7; }
+    .copy-hint { font-size: 13px; color: #718096; margin-top: 4px; }
+    /* 복사 알림 */
+    .copy-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #27ae60;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .copy-toast.show { opacity: 1; }
+    /* 빈 상태 */
+    .empty-palette {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #4a5568;
+      padding: 40px;
+      font-size: 15px;
+    }
+    /* 하단 통계 */
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #718096;
+      margin-bottom: 15px;
+    }
+    .clear-btn {
+      background: none;
+      color: #e74c3c;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .clear-btn:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<h1>🎨 색상 팔레트 생성기</h1>
+
+<!-- 컨트롤 영역 -->
+<div class="controls">
+  <!-- 단일 박스 생성 버튼 -->
+  <button class="generate-btn" onclick="addColorBox()">+ 랜덤 색상 추가</button>
+  <!-- 5개 일괄 생성 버튼 -->
+  <button class="count-btn" onclick="addMultiple(5)">5개 추가</button>
+  <!-- 전체 지우기 버튼 -->
+  <button class="count-btn" onclick="clearAll()">전체 삭제</button>
+</div>
+
+<!-- 통계 바 -->
+<div class="stats-bar">
+  <span id="boxCount">박스 0개</span>
+  <button class="clear-btn" onclick="clearAll()">모두 지우기</button>
+</div>
+
+<!-- 색상 팔레트 그리드 -->
+<div class="palette-grid" id="paletteGrid">
+  <div class="empty-palette" id="emptyMsg">버튼을 클릭해 색상 박스를 추가해보세요!</div>
+</div>
+
+<!-- 선택된 색상 정보 패널 -->
+<div class="color-info" id="colorInfo">
+  <div class="selected-preview" id="selectedPreview"></div>
+  <div class="color-details">
+    <div class="hex-display" id="hexDisplay" onclick="copyToClipboard()"></div>
+    <div class="copy-hint">클릭하여 HEX 코드 복사</div>
+  </div>
+</div>
+
+<!-- 복사 알림 토스트 -->
+<div class="copy-toast" id="copyToast">✓ 클립보드에 복사되었습니다!</div>
+
+<script>
+  // 현재 선택된 박스 참조 (null이면 선택 없음)
+  let selectedBox = null;
+
+  // ─────────────────────────────────────────
+  // 랜덤 HEX 색상 생성 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 랜덤 HEX 색상 문자열을 생성하는 함수
+   * @returns {string} '#RRGGBB' 형태의 HEX 색상
+   */
+  function randomHex() {
+    // Math.random() * 0xFFFFFF → 0~16777215 사이의 랜덤 숫자
+    // toString(16) → 16진수 문자열로 변환
+    // padStart(6, '0') → 6자리 미만이면 앞에 '0' 채우기
+    return '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0').toUpperCase();
+  }
+
+  // ─────────────────────────────────────────
+  // 색상 박스 생성 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 랜덤 색상 박스를 생성하여 팔레트 그리드에 추가하는 함수
+   * createElement, classList, dataset 활용
+   */
+  function addColorBox() {
+    const grid = document.getElementById('paletteGrid');
+
+    // 빈 상태 메시지 제거
+    const emptyMsg = document.getElementById('emptyMsg');
+    if (emptyMsg) emptyMsg.remove();
+
+    // 랜덤 HEX 색상 생성
+    const color = randomHex();
+
+    // ── createElement로 박스 생성 ────────────
+    const box = document.createElement('div');
+
+    // classList.add로 클래스 추가
+    box.classList.add('color-box');
+
+    // 배경색 설정
+    box.style.backgroundColor = color;
+
+    // dataset에 색상 값 저장 (클릭 시 읽기 위해)
+    box.dataset.color = color;
+
+    // 박스 내부 HTML 구성
+    box.innerHTML = `
+      <span class="hex-label">${color}</span>
+      <button class="box-delete" title="삭제">✕</button>
+    `;
+
+    // ── 박스 클릭 이벤트 (HEX 표시 + 선택 상태) ──
+
+    box.addEventListener('click', function(event) {
+      // 삭제 버튼 클릭은 여기서 처리하지 않음
+      if (event.target.classList.contains('box-delete')) return;
+
+      // 이전에 선택된 박스의 selected 클래스 제거
+      if (selectedBox) {
+        selectedBox.classList.remove('selected'); // classList.remove 사용
+      }
+
+      // 현재 박스에 selected 클래스 추가
+      box.classList.add('selected'); // classList.add 사용
+      selectedBox = box; // 선택된 박스 갱신
+
+      // dataset에서 색상 읽어 패널에 표시
+      const hexColor = box.dataset.color; // dataset.color로 읽기
+      showColorInfo(hexColor);
+    });
+
+    // ── 삭제 버튼 클릭 이벤트 ──────────────
+
+    const deleteBtn = box.querySelector('.box-delete');
+    deleteBtn.addEventListener('click', function(event) {
+      event.stopPropagation(); // 부모(box) 클릭 이벤트 전파 차단
+
+      // 삭제할 박스가 현재 선택된 박스이면 패널 숨기기
+      if (selectedBox === box) {
+        selectedBox = null;
+        document.getElementById('colorInfo').style.display = 'none';
+      }
+
+      // 박스 제거 (remove 메서드)
+      box.remove();
+
+      // 박스가 없으면 빈 상태 메시지 복구
+      updateEmptyState();
+      updateBoxCount();
+    });
+
+    // 그리드에 박스 추가
+    grid.appendChild(box);
+
+    // 박스 수 업데이트
+    updateBoxCount();
+  }
+
+  /**
+   * 여러 개의 박스를 한 번에 추가하는 함수
+   * @param {number} count - 추가할 박스 수
+   */
+  function addMultiple(count) {
+    for (let i = 0; i < count; i++) {
+      addColorBox();
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // 색상 정보 패널 표시
+  // ─────────────────────────────────────────
+
+  /**
+   * 선택된 색상 정보를 하단 패널에 표시하는 함수
+   * @param {string} hexColor - 표시할 HEX 색상 문자열
+   */
+  function showColorInfo(hexColor) {
+    const infoPanel = document.getElementById('colorInfo');
+    const preview = document.getElementById('selectedPreview');
+    const hexDisplay = document.getElementById('hexDisplay');
+
+    // 패널 표시
+    infoPanel.style.display = 'flex';
+
+    // 색상 미리보기 업데이트
+    preview.style.backgroundColor = hexColor;
+
+    // HEX 코드 텍스트 표시 (textContent로 안전하게)
+    hexDisplay.textContent = hexColor;
+    hexDisplay.style.color = hexColor; // 색상 자체로 글자 색상 설정
+  }
+
+  // ─────────────────────────────────────────
+  // 클립보드 복사
+  // ─────────────────────────────────────────
+
+  /**
+   * 현재 표시된 HEX 코드를 클립보드에 복사하는 함수
+   * Clipboard API (비동기) 활용
+   */
+  function copyToClipboard() {
+    const hexDisplay = document.getElementById('hexDisplay');
+    const color = hexDisplay.textContent;
+
+    if (!color) return;
+
+    // Clipboard API로 비동기 복사
+    navigator.clipboard.writeText(color).then(() => {
+      showToast(`${color} 복사됨!`);
+    }).catch(() => {
+      // Clipboard API를 지원하지 않는 환경을 위한 폴백
+      showToast(`${color}`);
+    });
+  }
+
+  /**
+   * 화면 하단에 잠깐 나타났다 사라지는 알림을 표시하는 함수
+   * @param {string} message - 표시할 메시지
+   */
+  function showToast(message) {
+    const toast = document.getElementById('copyToast');
+    toast.textContent = `✓ ${message} 클립보드에 복사되었습니다!`;
+
+    // classList.add로 토스트 표시
+    toast.classList.add('show');
+
+    // 2초 후 classList.remove로 숨기기
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2000);
+  }
+
+  // ─────────────────────────────────────────
+  // 유틸리티 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 박스가 없을 때 빈 상태 메시지를 표시하는 함수
+   */
+  function updateEmptyState() {
+    const grid = document.getElementById('paletteGrid');
+    // querySelectorAll로 현재 박스들 확인
+    const boxes = grid.querySelectorAll('.color-box');
+
+    if (boxes.length === 0 && !document.getElementById('emptyMsg')) {
+      // createElement로 빈 상태 메시지 생성
+      const emptyMsg = document.createElement('div');
+      emptyMsg.id = 'emptyMsg';
+      emptyMsg.className = 'empty-palette';
+      emptyMsg.textContent = '버튼을 클릭해 색상 박스를 추가해보세요!';
+      grid.appendChild(emptyMsg);
+    }
+  }
+
+  /**
+   * 박스 개수를 세어 통계 바를 업데이트하는 함수
+   */
+  function updateBoxCount() {
+    const count = document.querySelectorAll('.color-box').length;
+    document.getElementById('boxCount').textContent = `박스 ${count}개`;
+  }
+
+  /**
+   * 모든 박스를 삭제하는 함수
+   */
+  function clearAll() {
+    const boxes = document.querySelectorAll('.color-box');
+    // forEach로 모든 박스 제거
+    boxes.forEach(box => box.remove());
+
+    // 선택 상태 초기화
+    selectedBox = null;
+    document.getElementById('colorInfo').style.display = 'none';
+
+    updateEmptyState();
+    updateBoxCount();
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,325 @@
+/* =============================================
+   대시보드 레이아웃 — 과제 정답
+   강의 06: grid-template-areas / grid-area / fr / 중첩 Grid
+   ============================================= */
+
+/* 기본 초기화 */
+* {
+  box-sizing: border-box; /* 패딩/테두리를 너비에 포함 */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* =============================================
+   대시보드 전체 레이아웃: CSS Grid
+   grid-template-areas로 시각적 레이아웃 선언
+   ============================================= */
+.dashboard {
+  display: grid;                           /* Grid 컨테이너 */
+
+  /* 열: 사이드바 220px 고정 + 메인 영역 가변(1fr) */
+  grid-template-columns: 220px 1fr;
+
+  /* 행: 헤더 60px / 메인 자동 / 푸터 50px */
+  grid-template-rows: 60px 1fr 50px;
+
+  /* 시각적 레이아웃 선언 */
+  grid-template-areas:
+    "header  header"     /* 1행: 헤더가 전체 너비 차지 */
+    "sidebar main"       /* 2행: 사이드바 | 메인 */
+    "footer  footer";    /* 3행: 푸터가 전체 너비 차지 */
+
+  min-height: 100vh;                       /* 최소 높이: 전체 화면 */
+}
+
+/* =============================================
+   헤더: grid-area: header
+   Flexbox로 로고와 네비게이션 배치
+   ============================================= */
+.header {
+  grid-area: header;              /* grid-template-areas의 "header" 영역 */
+
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;                  /* Flexbox로 내부 요소 배치 */
+  align-items: center;            /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 로고와 네비게이션을 양 끝에 */
+  padding: 0 24px;
+}
+
+/* 로고 */
+.header-logo {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #667eea;                 /* 보라 계열 */
+  letter-spacing: -0.5px;
+}
+
+/* 헤더 네비게이션: Flexbox */
+.header-nav {
+  display: flex;                  /* 링크들 가로 배치 */
+  align-items: center;
+  gap: 20px;                      /* 링크 사이 간격 */
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: #777;
+  font-size: 0.88rem;
+  transition: color 0.2s;
+}
+
+.header-nav a:hover { color: #667eea; }
+
+/* 아바타 원 */
+.avatar {
+  width: 34px;
+  height: 34px;
+  background-color: #667eea;      /* 메인 컬러 */
+  color: white;
+  border-radius: 50%;             /* 원 모양 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* =============================================
+   사이드바: grid-area: sidebar
+   ============================================= */
+.sidebar {
+  grid-area: sidebar;             /* grid-template-areas의 "sidebar" 영역 */
+
+  background-color: #2c3e50;      /* 짙은 배경 */
+  padding: 24px 0;
+  overflow-y: auto;               /* 메뉴가 많으면 스크롤 */
+}
+
+/* 사이드바 네비게이션 */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;         /* 세로로 메뉴 나열 */
+  gap: 4px;
+}
+
+/* 사이드바 메뉴 아이템 */
+.nav-item {
+  display: flex;                  /* 아이콘 + 텍스트 가로 배치 */
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  text-decoration: none;
+  color: #aab7b8;                 /* 기본: 흐린 색 */
+  font-size: 0.9rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-item:hover {
+  background-color: rgba(255,255,255,0.07); /* 호버: 살짝 밝아짐 */
+  color: white;
+}
+
+/* 활성 메뉴 아이템 */
+.nav-item.active {
+  background-color: rgba(102,126,234,0.2);  /* 보라 반투명 배경 */
+  color: #667eea;                           /* 메인 컬러 */
+  border-right: 3px solid #667eea;          /* 오른쪽 강조 선 */
+}
+
+.nav-icon {
+  font-size: 0.75rem;
+  width: 16px;
+  text-align: center;
+}
+
+/* =============================================
+   메인: grid-area: main
+   ============================================= */
+.main {
+  grid-area: main;                /* grid-template-areas의 "main" 영역 */
+
+  padding: 28px;
+  overflow-y: auto;               /* 내용이 많으면 스크롤 */
+}
+
+/* 메인 제목 */
+.main-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 24px;
+}
+
+/* =============================================
+   통계 카드 3개: 메인 내부에서 Grid 중첩 사용
+   ============================================= */
+.stats-cards {
+  display: grid;                  /* Grid 다시 사용 (중첩 Grid) */
+  grid-template-columns: repeat(3, 1fr); /* 3열 균등 */
+  gap: 16px;                      /* 카드 사이 간격 */
+  margin-bottom: 24px;
+}
+
+/* 통계 카드 공통 */
+.stat-card {
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 카드별 배경 그라데이션 */
+.stat-blue   { background: linear-gradient(135deg, #667eea, #764ba2); }
+.stat-green  { background: linear-gradient(135deg, #43e97b, #38f9d7); color: #1a5426; }
+.stat-purple { background: linear-gradient(135deg, #fa709a, #fee140); color: #5d2206; }
+
+/* 카드 상단: 라벨 + 아이콘 */
+.stat-top {
+  display: flex;                  /* Flexbox로 라벨과 아이콘 양끝에 배치 */
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.stat-icon {
+  font-size: 1.3rem;
+}
+
+/* 통계 숫자 */
+.stat-number {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+/* 변화율 */
+.stat-change {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.positive { color: rgba(255,255,255,0.9); }
+.negative { color: rgba(255,100,100,0.9); }
+
+/* =============================================
+   대형 콘텐츠 영역: 차트 + 활동
+   ============================================= */
+.content-grid {
+  display: grid;                             /* Grid 사용 */
+  grid-template-columns: 2fr 1fr;            /* 차트 넓게, 활동 좁게 */
+  gap: 16px;
+}
+
+/* 콘텐츠 카드 공통 */
+.content-card {
+  background: white;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
+.content-card h3 {
+  font-size: 1rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* 차트 막대 그래프 시각화 */
+.chart-bars {
+  display: flex;                  /* 막대들을 가로로 배치 */
+  align-items: flex-end;          /* 막대를 아래부터 채움 */
+  justify-content: space-between;
+  height: 140px;
+  gap: 8px;
+}
+
+.bar {
+  flex: 1;                        /* 균등한 너비 */
+  background: linear-gradient(to top, #667eea, #a18cd1); /* 위쪽으로 그라데이션 */
+  border-radius: 4px 4px 0 0;    /* 위 모서리만 둥글게 */
+  position: relative;
+  transition: opacity 0.2s;
+  min-height: 10%;
+}
+
+.bar:hover { opacity: 0.8; }
+
+.bar span {
+  position: absolute;
+  bottom: -22px;                  /* 막대 아래에 요일 표시 */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  color: #888;
+}
+
+/* 활동 목록 */
+.activity-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 활동 아이템: Flexbox로 점 + 텍스트 배치 */
+.activity-item {
+  display: flex;                  /* 가로 배치 */
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.activity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;             /* 원 모양 */
+  flex-shrink: 0;                 /* 줄어들지 않음 */
+  margin-top: 4px;
+}
+
+/* 점 색상 종류 */
+.dot-blue   { background-color: #667eea; }
+.dot-green  { background-color: #43e97b; }
+.dot-orange { background-color: #f39c12; }
+.dot-purple { background-color: #fa709a; }
+
+.activity-text {
+  font-size: 0.85rem;
+  color: #444;
+  margin-bottom: 2px;
+}
+
+.activity-time {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+/* =============================================
+   푸터: grid-area: footer
+   ============================================= */
+.footer {
+  grid-area: footer;              /* grid-template-areas의 "footer" 영역 */
+
+  background-color: #2c3e50;
+  color: #aab7b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+}

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입 - 웹 개발 학습 커뮤니티</title>
+</head>
+<body>
+
+  <h1>웹 개발 학습 커뮤니티</h1>
+  <h2>회원가입</h2>
+
+  <p>아래 양식을 작성하여 회원가입을 완료하세요. (<span>*</span> 표시는 필수 항목입니다)</p>
+
+  <!-- form: 사용자 입력 데이터를 담는 컨테이너 -->
+  <!-- action: 폼 데이터를 전송할 서버 URL (현재는 예시) -->
+  <!-- method="post": 민감한 정보(비밀번호 등)는 POST 방식으로 전송 -->
+  <form action="/register" method="post">
+
+    <!-- ============================== -->
+    <!-- fieldset 1: 기본 계정 정보      -->
+    <!-- ============================== -->
+    <fieldset>
+      <!-- fieldset: 관련 있는 폼 요소들을 시각적/논리적으로 그룹화 -->
+      <legend>계정 정보</legend>
+      <!-- legend: fieldset의 제목. fieldset 안에 첫 번째로 작성 -->
+
+      <!-- 아이디 입력 -->
+      <div>
+        <label for="username">아이디 *</label>
+        <!-- label: 입력 요소의 설명. for 속성으로 input의 id와 연결 -->
+        <!-- 라벨 클릭 시 연결된 input에 포커스가 생김 -->
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="영문, 숫자 4~20자"
+          minlength="4"
+          maxlength="20"
+          required
+          <!-- required: 이 항목을 입력하지 않으면 폼 제출이 안 됨 -->
+        >
+      </div>
+
+      <!-- 이메일 입력 -->
+      <div>
+        <label for="email">이메일 *</label>
+        <input
+          type="email"
+          <!-- type="email": @를 포함한 이메일 형식인지 자동 검증 -->
+          id="email"
+          name="email"
+          placeholder="example@email.com"
+          required
+        >
+      </div>
+
+      <!-- 비밀번호 입력 -->
+      <div>
+        <label for="password">비밀번호 *</label>
+        <input
+          type="password"
+          <!-- type="password": 입력 내용이 •••로 가려짐 -->
+          id="password"
+          name="password"
+          placeholder="8자 이상 (영문, 숫자, 특수문자)"
+          minlength="8"
+          required
+        >
+      </div>
+
+      <!-- 비밀번호 확인 -->
+      <div>
+        <label for="password-confirm">비밀번호 확인 *</label>
+        <input
+          type="password"
+          id="password-confirm"
+          name="password_confirm"
+          placeholder="비밀번호를 다시 입력하세요"
+          minlength="8"
+          required
+        >
+      </div>
+
+    </fieldset>
+
+    <!-- ============================== -->
+    <!-- fieldset 2: 개인 정보           -->
+    <!-- ============================== -->
+    <fieldset>
+      <legend>개인 정보</legend>
+
+      <!-- 이름 입력 -->
+      <div>
+        <label for="fullname">이름 *</label>
+        <input
+          type="text"
+          id="fullname"
+          name="fullname"
+          placeholder="실명을 입력하세요"
+          required
+        >
+      </div>
+
+      <!-- 생년월일 입력 -->
+      <div>
+        <label for="birthday">생년월일</label>
+        <input
+          type="date"
+          <!-- type="date": 날짜 선택 달력이 나타남 -->
+          id="birthday"
+          name="birthday"
+          min="1900-01-01"
+          <!-- min: 선택 가능한 최소 날짜 -->
+          max="2026-12-31"
+          <!-- max: 선택 가능한 최대 날짜 -->
+        >
+      </div>
+
+      <!-- 나이 입력 (숫자) -->
+      <div>
+        <label for="age">나이</label>
+        <input
+          type="number"
+          <!-- type="number": 숫자만 입력 가능, 화살표 버튼 제공 -->
+          id="age"
+          name="age"
+          min="1"
+          max="150"
+          step="1"
+          <!-- step: 증감 단위. 1이면 정수만 입력 가능 -->
+          placeholder="나이"
+        >
+      </div>
+
+      <!-- 성별 선택 (라디오 버튼) -->
+      <div>
+        <span>성별</span>
+        <!-- radio: 같은 name 속성을 가진 그룹에서 하나만 선택 가능 -->
+        <input type="radio" id="gender-male" name="gender" value="male">
+        <label for="gender-male">남성</label>
+
+        <input type="radio" id="gender-female" name="gender" value="female">
+        <label for="gender-female">여성</label>
+
+        <input type="radio" id="gender-other" name="gender" value="other">
+        <label for="gender-other">기타</label>
+
+        <input type="radio" id="gender-none" name="gender" value="prefer-not-to-say" checked>
+        <!-- checked: 페이지 로드 시 기본으로 선택된 상태 -->
+        <label for="gender-none">선택 안 함</label>
+      </div>
+
+      <!-- 거주 지역 (드롭다운) -->
+      <div>
+        <label for="region">거주 지역</label>
+        <select id="region" name="region">
+        <!-- select: 드롭다운 선택 목록 -->
+          <option value="">-- 지역을 선택하세요 --</option>
+          <!-- value=""인 option은 선택하지 않은 상태를 의미 -->
+          <optgroup label="특별시/광역시">
+          <!-- optgroup: 관련 option을 그룹으로 묶음 -->
+            <option value="seoul">서울특별시</option>
+            <option value="busan">부산광역시</option>
+            <option value="incheon">인천광역시</option>
+            <option value="daegu">대구광역시</option>
+            <option value="gwangju">광주광역시</option>
+            <option value="daejeon">대전광역시</option>
+            <option value="ulsan">울산광역시</option>
+          </optgroup>
+          <optgroup label="도">
+            <option value="gyeonggi">경기도</option>
+            <option value="gangwon">강원도</option>
+            <option value="chungbuk">충청북도</option>
+            <option value="chungnam">충청남도</option>
+            <option value="jeonbuk">전북특별자치도</option>
+            <option value="jeonnam">전라남도</option>
+            <option value="gyeongbuk">경상북도</option>
+            <option value="gyeongnam">경상남도</option>
+            <option value="jeju">제주특별자치도</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- 전화번호 입력 -->
+      <div>
+        <label for="phone">전화번호</label>
+        <input
+          type="tel"
+          <!-- type="tel": 전화번호 입력. 모바일에서 숫자 키패드 표시 -->
+          id="phone"
+          name="phone"
+          placeholder="010-0000-0000"
+          pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
+          <!-- pattern: 정규식으로 입력 형식 강제 검증 -->
+        >
+      </div>
+
+      <!-- 프로필 이미지 업로드 -->
+      <div>
+        <label for="profile-img">프로필 사진</label>
+        <input
+          type="file"
+          <!-- type="file": 파일 선택 다이얼로그 열기 -->
+          id="profile-img"
+          name="profile_image"
+          accept="image/jpeg, image/png, image/gif"
+          <!-- accept: 허용할 파일 형식 지정 -->
+        >
+      </div>
+
+    </fieldset>
+
+    <!-- ============================== -->
+    <!-- fieldset 3: 학습 정보           -->
+    <!-- ============================== -->
+    <fieldset>
+      <legend>학습 정보</legend>
+
+      <!-- 개발 경험 수준 (라디오) -->
+      <div>
+        <span>개발 경험 수준 *</span>
+        <input type="radio" id="level-beginner" name="level" value="beginner" checked>
+        <label for="level-beginner">입문 (처음 시작)</label>
+
+        <input type="radio" id="level-junior" name="level" value="junior">
+        <label for="level-junior">초급 (1년 미만)</label>
+
+        <input type="radio" id="level-mid" name="level" value="mid">
+        <label for="level-mid">중급 (1~3년)</label>
+
+        <input type="radio" id="level-senior" name="level" value="senior">
+        <label for="level-senior">고급 (3년 이상)</label>
+      </div>
+
+      <!-- 관심 분야 (체크박스 - 다중 선택) -->
+      <div>
+        <span>관심 분야 (복수 선택 가능)</span>
+        <!-- checkbox: 여러 개 선택 가능 -->
+        <input type="checkbox" id="interest-html" name="interest" value="html">
+        <label for="interest-html">HTML/CSS</label>
+
+        <input type="checkbox" id="interest-js" name="interest" value="javascript">
+        <label for="interest-js">JavaScript</label>
+
+        <input type="checkbox" id="interest-react" name="interest" value="react">
+        <label for="interest-react">React</label>
+
+        <input type="checkbox" id="interest-node" name="interest" value="nodejs">
+        <label for="interest-node">Node.js</label>
+
+        <input type="checkbox" id="interest-python" name="interest" value="python">
+        <label for="interest-python">Python</label>
+
+        <input type="checkbox" id="interest-db" name="interest" value="database">
+        <label for="interest-db">데이터베이스</label>
+      </div>
+
+      <!-- 학습 목표 주당 시간 (range 슬라이더) -->
+      <div>
+        <label for="weekly-hours">주당 학습 계획 시간: <span id="hours-display">10</span>시간</label>
+        <input
+          type="range"
+          <!-- type="range": 슬라이더 형태의 입력 -->
+          id="weekly-hours"
+          name="weekly_hours"
+          min="1"
+          max="40"
+          step="1"
+          value="10"
+          <!-- value: 초기값 -->
+        >
+      </div>
+
+      <!-- 자기소개 (여러 줄 텍스트) -->
+      <div>
+        <label for="intro">자기소개</label>
+        <textarea
+          <!-- textarea: 여러 줄의 텍스트를 입력받는 요소 -->
+          id="intro"
+          name="introduction"
+          rows="5"
+          <!-- rows: 텍스트 영역의 기본 줄 수 -->
+          cols="40"
+          <!-- cols: 텍스트 영역의 기본 열 수 -->
+          placeholder="간단한 자기소개와 학습 목표를 적어주세요 (최대 500자)"
+          maxlength="500"
+        ></textarea>
+      </div>
+
+      <!-- 추천인 코드 (선택, disabled 예시) -->
+      <div>
+        <label for="promo-code">프로모션 코드 (이벤트 기간 종료)</label>
+        <input
+          type="text"
+          id="promo-code"
+          name="promo_code"
+          value="이벤트 종료"
+          disabled
+          <!-- disabled: 입력 불가, 폼 제출 시 이 값은 전송되지 않음 -->
+        >
+      </div>
+
+    </fieldset>
+
+    <!-- ============================== -->
+    <!-- fieldset 4: 약관 동의           -->
+    <!-- ============================== -->
+    <fieldset>
+      <legend>약관 동의</legend>
+
+      <div>
+        <input type="checkbox" id="agree-terms" name="agree_terms" required>
+        <!-- required: 체크박스도 required를 쓰면 체크해야만 제출 가능 -->
+        <label for="agree-terms">
+          [필수] <a href="/terms" target="_blank">이용약관</a>에 동의합니다
+        </label>
+      </div>
+
+      <div>
+        <input type="checkbox" id="agree-privacy" name="agree_privacy" required>
+        <label for="agree-privacy">
+          [필수] <a href="/privacy" target="_blank">개인정보 처리방침</a>에 동의합니다
+        </label>
+      </div>
+
+      <div>
+        <input type="checkbox" id="agree-marketing" name="agree_marketing">
+        <!-- required 없음: 선택 항목 -->
+        <label for="agree-marketing">
+          [선택] 마케팅 정보 수신에 동의합니다
+        </label>
+      </div>
+
+      <!-- 숨겨진 값: 사용자에게 보이지 않지만 폼과 함께 전송 -->
+      <input type="hidden" name="signup_source" value="web">
+      <!-- hidden: 폼 출처 등 서버에 전달할 내부 데이터 -->
+
+    </fieldset>
+
+    <!-- ============================== -->
+    <!-- 버튼 영역                       -->
+    <!-- ============================== -->
+    <div>
+      <!-- type="submit": 폼을 서버로 전송하는 버튼 -->
+      <button type="submit">회원가입 완료</button>
+
+      <!-- type="reset": 폼의 모든 입력값을 초기 상태로 리셋하는 버튼 -->
+      <button type="reset">다시 작성</button>
+    </div>
+
+  </form>
+
+  <hr>
+  <p>이미 회원이신가요? <a href="/login">로그인하기</a></p>
+
+</body>
+</html>

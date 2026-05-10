@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>강의 08 — 비동기 예제 (사용자 목록 fetch)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f0f4f8;
+    }
+    h1 { color: #2c3e50; border-bottom: 3px solid #1abc9c; padding-bottom: 10px; }
+    /* 컨트롤 영역 */
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .fetch-btn {
+      padding: 12px 24px;
+      background: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .fetch-btn:hover { background: #17a589; }
+    .fetch-btn:disabled { background: #a3e4d7; cursor: not-allowed; }
+    .status-text { font-size: 14px; color: #7f8c8d; }
+    /* 로딩 스피너 */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ecf0f1;
+      border-top-color: #1abc9c;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* 에러 메시지 */
+    .error-box {
+      background: #fdecea;
+      border-left: 4px solid #e74c3c;
+      padding: 15px 20px;
+      border-radius: 0 8px 8px 0;
+      color: #c0392b;
+      display: none;
+      margin-bottom: 20px;
+    }
+    /* 카드 그리드 */
+    .user-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    /* 사용자 카드 */
+    .user-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.4s ease both;
+    }
+    .user-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* 카드 내 아바타 */
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1abc9c, #3498db);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 12px;
+    }
+    /* 사용자 정보 */
+    .user-name { font-size: 17px; font-weight: bold; color: #2c3e50; margin-bottom: 4px; }
+    .user-username { font-size: 13px; color: #7f8c8d; margin-bottom: 8px; }
+    .user-detail {
+      font-size: 13px;
+      color: #555;
+      margin: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .user-detail span { font-size: 14px; }
+    /* 구분선 */
+    .card-divider {
+      border: none;
+      border-top: 1px solid #ecf0f1;
+      margin: 12px 0;
+    }
+    /* 카드 하단 링크 */
+    .user-website {
+      font-size: 12px;
+      color: #1abc9c;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .user-website:hover { text-decoration: underline; }
+    /* 상태 정보 */
+    .load-info {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>강의 08 — fetch API 예제: 사용자 목록</h1>
+
+<!-- 컨트롤 -->
+<div class="controls">
+  <button class="fetch-btn" id="fetchBtn" onclick="loadUsers()">사용자 불러오기</button>
+  <span class="status-text" id="statusText">버튼을 클릭하면 JSONPlaceholder API에서 데이터를 가져옵니다.</span>
+</div>
+
+<!-- 로딩 상태 -->
+<div class="loading" id="loadingArea">
+  <div class="spinner"></div>
+  <p style="color:#7f8c8d">데이터를 불러오는 중...</p>
+</div>
+
+<!-- 에러 메시지 -->
+<div class="error-box" id="errorBox"></div>
+
+<!-- 결과 정보 -->
+<div class="load-info" id="loadInfo"></div>
+
+<!-- 사용자 카드 그리드 -->
+<div class="user-grid" id="userGrid"></div>
+
+<script>
+  // ─────────────────────────────────────────
+  // fetch API + async/await로 사용자 목록 가져오기
+  // ─────────────────────────────────────────
+
+  /**
+   * JSONPlaceholder API에서 사용자 목록을 가져와 카드로 렌더링하는 함수
+   * async/await, try/catch, 로딩 상태 처리 포함
+   */
+  async function loadUsers() {
+    const fetchBtn   = document.getElementById('fetchBtn');
+    const loadingArea = document.getElementById('loadingArea');
+    const errorBox   = document.getElementById('errorBox');
+    const userGrid   = document.getElementById('userGrid');
+    const statusText = document.getElementById('statusText');
+    const loadInfo   = document.getElementById('loadInfo');
+
+    // ── 로딩 상태 시작 ────────────────────
+
+    // 버튼 비활성화 (중복 클릭 방지)
+    fetchBtn.disabled = true;
+    fetchBtn.textContent = '불러오는 중...';
+
+    // 로딩 스피너 표시
+    loadingArea.style.display = 'block';
+
+    // 이전 결과와 에러 초기화
+    userGrid.innerHTML = '';
+    errorBox.style.display = 'none';
+    statusText.textContent = 'API에서 데이터를 가져오는 중...';
+
+    // 작업 시작 시간 기록 (소요 시간 계산용)
+    const startTime = Date.now();
+
+    // ── 비동기 데이터 요청 ────────────────
+
+    try {
+      // fetch: URL로 HTTP GET 요청 (비동기)
+      // await: Promise가 완료될 때까지 대기
+      const response = await fetch('https://jsonplaceholder.typicode.com/users');
+
+      // HTTP 상태 코드 확인 (200~299: 성공)
+      if (!response.ok) {
+        // 서버 에러 시 직접 에러를 throw
+        throw new Error(`서버 오류: HTTP ${response.status} ${response.statusText}`);
+      }
+
+      // 응답 본문을 JSON으로 파싱 (await 필요)
+      const users = await response.json();
+
+      // 소요 시간 계산
+      const elapsed = Date.now() - startTime;
+
+      // 결과 정보 표시
+      loadInfo.textContent = `✅ ${users.length}명의 사용자를 불러왔습니다. (${elapsed}ms 소요)`;
+      statusText.textContent = `마지막 업데이트: ${new Date().toLocaleTimeString()}`;
+
+      // 사용자 카드 렌더링
+      renderUsers(users);
+
+    } catch (error) {
+      // ── 에러 처리 ──────────────────────
+
+      // error.message로 에러 내용 표시
+      errorBox.style.display = 'block';
+      errorBox.innerHTML = `
+        ⚠️ 데이터를 불러오는 데 실패했습니다.<br>
+        <strong>오류 내용:</strong> ${error.message}<br>
+        <small>인터넷 연결을 확인하거나 잠시 후 다시 시도해주세요.</small>
+      `;
+      statusText.textContent = '불러오기 실패';
+
+    } finally {
+      // ── finally: 성공/실패 무관하게 항상 실행 ──
+
+      // 로딩 스피너 숨기기
+      loadingArea.style.display = 'none';
+
+      // 버튼 복구
+      fetchBtn.disabled = false;
+      fetchBtn.textContent = '새로고침';
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // 사용자 카드 렌더링 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 사용자 배열을 받아 카드로 렌더링하는 함수
+   * JSON 데이터의 다양한 중첩 속성 접근 예시 포함
+   * @param {Array} users - 사용자 객체 배열
+   */
+  function renderUsers(users) {
+    const grid = document.getElementById('userGrid');
+
+    // map으로 각 사용자 객체를 카드 HTML로 변환
+    grid.innerHTML = users.map((user, index) => {
+      // 구조분해할당으로 필요한 속성 추출
+      // 중첩 객체도 구조분해 가능
+      const {
+        id,
+        name,
+        username,
+        email,
+        phone,
+        website,
+        company: { name: companyName },  // 중첩 객체의 name → companyName
+        address: { city }                 // 중첩 객체의 city
+      } = user;
+
+      // 이름 첫 글자 (아바타용)
+      const initial = name.charAt(0);
+
+      // 카드 등장 딜레이 (순서대로 나타나는 효과)
+      const delay = index * 60;
+
+      return `
+        <div class="user-card" style="animation-delay: ${delay}ms">
+          <div class="user-avatar">${initial}</div>
+          <div class="user-name">${name}</div>
+          <div class="user-username">@${username}</div>
+          <hr class="card-divider">
+          <div class="user-detail">
+            <span>✉️</span> ${email}
+          </div>
+          <div class="user-detail">
+            <span>📞</span> ${phone.split(' ')[0]}
+          </div>
+          <div class="user-detail">
+            <span>📍</span> ${city}
+          </div>
+          <div class="user-detail">
+            <span>🏢</span> ${companyName}
+          </div>
+          <hr class="card-divider">
+          <a class="user-website" href="https://${website}" target="_blank">
+            🌐 ${website}
+          </a>
+        </div>
+      `;
+    }).join(''); // 배열을 하나의 문자열로 합치기
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<!-- HTML5 문서 선언: 반드시 첫 줄에 위치해야 합니다 -->
+<html lang="ko">
+<!-- lang="ko": 문서 전체가 한국어로 작성되었음을 선언 -->
+<!-- 검색엔진, 번역기, 스크린리더가 이 정보를 활용합니다 -->
+
+<head>
+  <meta charset="UTF-8">
+  <!-- UTF-8: 한글을 포함한 전 세계 모든 언어를 표현할 수 있는 인코딩 방식 -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 모바일 기기에서 화면 크기에 맞게 보이도록 설정하는 반응형 설정 -->
+
+  <meta name="description" content="홍길동의 웹 개발 포트폴리오 - HTML, CSS, JavaScript 프로젝트 모음">
+  <!-- description: 검색 결과에서 제목 아래에 표시되는 설명 텍스트 (SEO에 중요) -->
+
+  <meta name="keywords" content="포트폴리오, 웹 개발, HTML, CSS, JavaScript, 홍길동">
+  <!-- keywords: 검색엔진이 페이지 주제를 파악하는 데 참고하는 키워드 -->
+
+  <meta name="author" content="홍길동">
+  <!-- author: 페이지 작성자 정보 -->
+
+  <title>홍길동 - 웹 개발 포트폴리오</title>
+  <!-- title: 브라우저 탭과 검색 결과에 표시되는 페이지 제목 (SEO에 매우 중요) -->
+</head>
+
+<body>
+
+  <!-- ======================================= -->
+  <!-- HEADER: 페이지 상단 머리글 영역          -->
+  <!-- ======================================= -->
+  <!-- header: 페이지 전체 또는 섹션의 소개 영역 -->
+  <!-- 보통 사이트 이름, 로고, 메인 내비게이션이 들어감 -->
+  <header>
+
+    <h1>홍길동</h1>
+    <!-- h1: 페이지 전체에서 가장 중요한 제목 (페이지당 하나 권장) -->
+    <!-- 포트폴리오에서는 자신의 이름이 메인 제목이 됩니다 -->
+
+    <p>웹 개발을 공부하고 있는 예비 프론트엔드 개발자</p>
+    <!-- 한 줄 소개 문구 -->
+
+    <!-- nav: 사이트의 주요 내비게이션 링크 목록을 감싸는 시맨틱 태그 -->
+    <!-- 스크린리더가 "내비게이션 영역"이라고 알려줍니다 -->
+    <nav>
+      <ul>
+        <!-- ul: 내비게이션 링크는 순서 없는 목록으로 구성하는 것이 의미론적으로 올바름 -->
+        <li><a href="#about">소개</a></li>
+        <!-- href="#about": 이 페이지 내에서 id="about"인 요소로 스크롤 이동 -->
+        <li><a href="#skills">기술 스택</a></li>
+        <li><a href="#projects">프로젝트</a></li>
+        <li><a href="#education">학력</a></li>
+        <li><a href="#contact">연락처</a></li>
+      </ul>
+    </nav>
+
+  </header>
+
+  <!-- ======================================= -->
+  <!-- MAIN: 페이지의 핵심 콘텐츠 영역          -->
+  <!-- ======================================= -->
+  <!-- main: 페이지의 주요 콘텐츠를 담는 태그 -->
+  <!-- 페이지 전체에서 단 하나만 사용해야 합니다 -->
+  <!-- header, footer, nav, aside 등 반복되는 요소는 main 밖에 위치 -->
+  <main>
+
+    <!-- ======================================= -->
+    <!-- SECTION 1: 자기소개 (About)             -->
+    <!-- ======================================= -->
+    <!-- section: 문서의 독립적인 구획. 주제별로 콘텐츠를 묶을 때 사용 -->
+    <!-- id="about": nav의 앵커 링크 <a href="#about">의 이동 목적지 -->
+    <section id="about">
+      <h2>소개</h2>
+      <!-- h2: section의 주제 제목. section에는 반드시 제목을 포함하는 것을 권장 -->
+
+      <!-- figure: 이미지 + 캡션을 의미 있게 묶는 시맨틱 태그 -->
+      <!-- 단순히 img를 쓰는 것보다 figure를 쓰면 이미지의 역할이 명확해짐 -->
+      <figure>
+        <img
+          src="https://picsum.photos/seed/portfolio-profile/200/200"
+          alt="홍길동의 프로필 사진 - 웃고 있는 모습"
+          width="200"
+          height="200"
+          <!-- alt: 이미지를 볼 수 없을 때 대신 읽히는 텍스트 (접근성의 핵심) -->
+        >
+        <!-- figcaption: figure의 설명 텍스트. 이미지의 제목이나 출처 등을 적음 -->
+        <figcaption>안녕하세요, 홍길동입니다!</figcaption>
+      </figure>
+
+      <p>
+        안녕하세요! 저는 웹 개발에 깊은 관심을 갖고 공부하고 있는 홍길동입니다.
+        HTML부터 시작하여 CSS, JavaScript를 차례로 배우고 있으며,
+        언젠가 사람들에게 실제로 도움이 되는 웹 서비스를 만드는 것이 꿈입니다.
+      </p>
+      <p>
+        현재는 웹의 기초인 HTML을 열심히 공부하고 있습니다.
+        코딩을 배우면서 작은 것들을 만들어가는 과정이 너무 즐겁습니다.
+        앞으로 CSS와 JavaScript도 익혀서 더 완성도 있는 웹 페이지를 만들어 보겠습니다!
+      </p>
+
+    </section>
+
+    <hr>
+
+    <!-- ======================================= -->
+    <!-- SECTION 2: 기술 스택 (Skills)           -->
+    <!-- ======================================= -->
+    <section id="skills">
+      <h2>기술 스택</h2>
+
+      <!-- 기술을 카테고리별로 나눠서 표현 -->
+      <section>
+        <!-- section 안에 section을 중첩하여 더 세분화 가능 -->
+        <h3>현재 학습 중</h3>
+        <ul>
+          <li><strong>HTML5</strong> - 문서 구조 및 시맨틱 마크업</li>
+          <li><strong>CSS3</strong> - 스타일 및 레이아웃 (기초 단계)</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>학습 예정</h3>
+        <ul>
+          <li>JavaScript - 동적 기능 구현</li>
+          <li>React - 컴포넌트 기반 UI</li>
+          <li>Git/GitHub - 버전 관리 및 협업</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>기타 도구</h3>
+        <ul>
+          <li>VS Code - 코드 에디터</li>
+          <li>Chrome DevTools - 디버깅 도구</li>
+          <li>Figma - 디자인 참고 (기초)</li>
+        </ul>
+      </section>
+
+    </section>
+
+    <hr>
+
+    <!-- ======================================= -->
+    <!-- SECTION 3: 프로젝트 (Projects)          -->
+    <!-- ======================================= -->
+    <section id="projects">
+      <h2>프로젝트</h2>
+      <p>HTML을 배우며 직접 만들어본 프로젝트들입니다.</p>
+
+      <!-- ============================== -->
+      <!-- 프로젝트 1                     -->
+      <!-- ============================== -->
+      <!-- article: 독립적으로 완결되는 콘텐츠 단위 -->
+      <!-- 블로그 글, 뉴스 기사, 제품 카드, 프로젝트 카드 등에 사용 -->
+      <article>
+        <!-- article 내부의 header: 이 콘텐츠 단위의 제목과 메타 정보 -->
+        <header>
+          <h3>자기소개 웹 페이지</h3>
+          <p>
+            <!-- time: 날짜나 시간을 나타내는 시맨틱 태그 -->
+            <!-- datetime 속성: 기계(검색엔진, 스크린리더)가 읽을 수 있는 ISO 형식 -->
+            <!-- 사람이 읽는 텍스트는 태그 안에 자유롭게 작성 -->
+            제작 기간:
+            <time datetime="2026-03">2026년 3월</time>
+            ~
+            <time datetime="2026-04">2026년 4월</time>
+          </p>
+        </header>
+
+        <!-- figure: 프로젝트 스크린샷을 이미지+캡션으로 묶기 -->
+        <figure>
+          <img
+            src="https://picsum.photos/seed/project-intro/600/350"
+            alt="자기소개 웹 페이지 스크린샷 - 이름, 소개, 취미 목록이 있는 화면"
+            width="600"
+          >
+          <!-- alt: 이미지를 설명하는 텍스트. 스크린샷의 경우 화면에 무엇이 있는지 설명 -->
+          <figcaption>프로젝트 1: HTML만으로 만든 자기소개 페이지</figcaption>
+        </figure>
+
+        <p>
+          HTML을 처음 배우고 만든 자기소개 페이지입니다.
+          DOCTYPE 선언부터 head, body 구조, h1~h6, p, ul, ol 태그를 활용했습니다.
+          CSS 없이 순수 HTML만으로 내용을 구성하는 연습을 했습니다.
+        </p>
+
+        <!-- article 내부의 footer: 사용 기술, 링크 등 마무리 정보 -->
+        <footer>
+          <p>사용 기술: HTML5</p>
+          <p>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              GitHub에서 코드 보기
+            </a>
+          </p>
+        </footer>
+      </article>
+
+      <hr>
+
+      <!-- ============================== -->
+      <!-- 프로젝트 2                     -->
+      <!-- ============================== -->
+      <article>
+        <header>
+          <h3>즐겨찾기 링크 모음 페이지</h3>
+          <p>
+            제작 기간:
+            <time datetime="2026-04">2026년 4월</time>
+            ~
+            <time datetime="2026-04">2026년 4월</time>
+          </p>
+        </header>
+
+        <figure>
+          <img
+            src="https://picsum.photos/seed/project-links/600/350"
+            alt="즐겨찾기 링크 모음 페이지 스크린샷 - 카테고리별로 정리된 링크와 이미지"
+            width="600"
+          >
+          <figcaption>프로젝트 2: 링크와 이미지를 활용한 즐겨찾기 모음 페이지</figcaption>
+        </figure>
+
+        <p>
+          a 태그, img 태그, figure/figcaption을 활용하여 만든 링크 모음 페이지입니다.
+          외부 링크 보안 처리(rel="noopener noreferrer"), 이미지 링크,
+          앵커 링크를 이용한 페이지 내 이동 기능을 구현했습니다.
+        </p>
+
+        <footer>
+          <p>사용 기술: HTML5 (a, img, figure, figcaption)</p>
+          <p>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              GitHub에서 코드 보기
+            </a>
+            |
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              라이브 데모 보기
+            </a>
+          </p>
+        </footer>
+      </article>
+
+      <hr>
+
+      <!-- ============================== -->
+      <!-- 프로젝트 3                     -->
+      <!-- ============================== -->
+      <article>
+        <header>
+          <h3>주간 수업 시간표</h3>
+          <p>
+            제작 기간:
+            <time datetime="2026-05">2026년 5월</time>
+            ~
+            <time datetime="2026-05">2026년 5월</time>
+          </p>
+        </header>
+
+        <figure>
+          <img
+            src="https://picsum.photos/seed/project-table/600/350"
+            alt="주간 수업 시간표 스크린샷 - colspan으로 점심시간이 병합된 HTML 테이블"
+            width="600"
+          >
+          <figcaption>프로젝트 3: colspan과 rowspan을 활용한 주간 시간표</figcaption>
+        </figure>
+
+        <p>
+          HTML 테이블로 만든 주간 수업 시간표입니다.
+          thead, tbody, tfoot 으로 테이블을 구조화하고,
+          colspan을 사용하여 점심시간을 가로로 병합하고,
+          rowspan으로 과목을 세로로 병합하는 기법을 연습했습니다.
+        </p>
+
+        <footer>
+          <p>사용 기술: HTML5 (table, thead, tbody, tfoot, colspan, rowspan)</p>
+          <p>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              GitHub에서 코드 보기
+            </a>
+          </p>
+        </footer>
+      </article>
+
+      <hr>
+
+      <!-- ============================== -->
+      <!-- 프로젝트 4                     -->
+      <!-- ============================== -->
+      <article>
+        <header>
+          <h3>회원가입 & 설문조사 폼</h3>
+          <p>
+            제작 기간:
+            <time datetime="2026-05">2026년 5월</time>
+          </p>
+        </header>
+
+        <figure>
+          <img
+            src="https://picsum.photos/seed/project-form/600/350"
+            alt="회원가입 폼 스크린샷 - 다양한 input 타입과 fieldset으로 구성된 양식"
+            width="600"
+          >
+          <figcaption>프로젝트 4: 다양한 input 타입을 활용한 회원가입 폼</figcaption>
+        </figure>
+
+        <p>
+          text, email, password, number, date, radio, checkbox, file, range 등
+          다양한 input 타입을 모두 활용하여 만든 회원가입 폼입니다.
+          fieldset과 legend로 관련 입력 요소를 그룹화하고,
+          required, placeholder 등 검증 속성도 적용했습니다.
+        </p>
+
+        <footer>
+          <p>사용 기술: HTML5 (form, input, select, textarea, fieldset, label)</p>
+          <p>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              GitHub에서 코드 보기
+            </a>
+            |
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              라이브 데모 보기
+            </a>
+          </p>
+        </footer>
+      </article>
+
+    </section>
+
+    <hr>
+
+    <!-- ======================================= -->
+    <!-- SECTION 4: 학력 (Education)             -->
+    <!-- ======================================= -->
+    <section id="education">
+      <h2>학력 및 활동</h2>
+
+      <!-- 학력 항목도 article로 표현 가능 (독립적인 콘텐츠 단위) -->
+      <article>
+        <header>
+          <h3>한국대학교 컴퓨터공학과</h3>
+          <p>
+            <!-- time으로 재학 기간 표현 -->
+            <time datetime="2022-03">2022년 3월</time>
+            ~
+            <time datetime="2026-02">2026년 2월</time>
+            (졸업)
+          </p>
+        </header>
+        <ul>
+          <li>전공 학점: 3.8 / 4.5</li>
+          <li>웹 개발 동아리 활동 (2022~2024)</li>
+          <li>학부 연구생 참여 (2024년)</li>
+        </ul>
+      </article>
+
+      <!-- 자격증/수상 내역 -->
+      <article>
+        <h3>자격증 및 수상</h3>
+        <ul>
+          <li>
+            정보처리기사
+            (<time datetime="2025-11">2025년 11월</time> 취득)
+          </li>
+          <li>
+            교내 웹 디자인 공모전 우수상
+            (<time datetime="2024-10">2024년 10월</time>)
+          </li>
+          <li>
+            SQLD (SQL 개발자)
+            (<time datetime="2025-06">2025년 6월</time> 취득)
+          </li>
+        </ul>
+      </article>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================= -->
+  <!-- ASIDE: 부가 정보 (사이드바)              -->
+  <!-- ======================================= -->
+  <!-- aside: 주요 콘텐츠와 간접적으로 관련된 부가 정보 -->
+  <!-- 사이드바, 작성자 정보, SNS 링크, 광고 등에 사용 -->
+  <aside>
+
+    <!-- 프로필 카드 -->
+    <section>
+      <h2>빠른 프로필</h2>
+      <figure>
+        <img
+          src="https://picsum.photos/seed/aside-profile/120/120"
+          alt="홍길동 프로필 사진"
+          width="120"
+          height="120"
+        >
+        <figcaption>홍길동</figcaption>
+      </figure>
+      <ul>
+        <li>위치: 서울특별시</li>
+        <li>관심분야: 프론트엔드 개발</li>
+        <li>현재 상태: 취업 준비 중</li>
+      </ul>
+    </section>
+
+    <!-- SNS/외부 링크 -->
+    <section>
+      <h2>링크</h2>
+      <!-- nav: 내비게이션 링크 목록 (aside 내에서도 사용 가능) -->
+      <nav>
+        <ul>
+          <li>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+              LinkedIn
+            </a>
+          </li>
+          <li>
+            <a href="https://velog.io" target="_blank" rel="noopener noreferrer">
+              기술 블로그 (Velog)
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+
+    <!-- 현재 공부 현황 -->
+    <section>
+      <h2>현재 학습 중</h2>
+      <ol>
+        <li>HTML5 시맨틱 태그 ← 여기!</li>
+        <li>CSS3 기초</li>
+        <li>JavaScript 입문 (예정)</li>
+      </ol>
+    </section>
+
+  </aside>
+
+  <!-- ======================================= -->
+  <!-- FOOTER: 페이지 바닥글                   -->
+  <!-- ======================================= -->
+  <!-- footer: 페이지 또는 섹션의 마무리 정보 -->
+  <!-- 저작권, 연락처, 사이트맵 링크 등이 포함됨 -->
+  <footer>
+
+    <!-- 추가 내비게이션 링크 -->
+    <nav>
+      <ul>
+        <li><a href="#about">소개</a></li>
+        <li><a href="#projects">프로젝트</a></li>
+        <li><a href="#contact">연락처</a></li>
+      </ul>
+    </nav>
+
+    <!-- 연락처 섹션 -->
+    <section id="contact">
+      <h2>연락처</h2>
+      <!-- address: 이 문서나 섹션의 작성자/소유자 연락처 정보를 담는 시맨틱 태그 -->
+      <!-- 전화번호, 이메일, 주소 등 연락처 관련 정보에 사용 -->
+      <address>
+        이메일:
+        <a href="mailto:hong@example.com">hong@example.com</a>
+        <br>
+        전화:
+        <a href="tel:010-1234-5678">010-1234-5678</a>
+        <br>
+        위치: 서울특별시 강남구
+      </address>
+    </section>
+
+    <!-- 저작권 정보 -->
+    <p>
+      <!-- small: 저작권, 면책 조항 등 부가적인 작은 텍스트에 사용 -->
+      <small>
+        © <time datetime="2026">2026</time> 홍길동. 모든 권리 보유.
+        <!-- time: 연도를 기계가 읽을 수 있는 datetime 속성과 함께 표현 -->
+      </small>
+    </p>
+
+  </footer>
+
+</body>
+</html>

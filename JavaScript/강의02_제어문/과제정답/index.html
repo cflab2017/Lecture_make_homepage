@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과제 02 정답 — 구구단 출력기</title>
+  <style>
+    /* 전체 레이아웃 */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f0f4f8;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+    /* 컨트롤 영역 (드롭다운 + 버튼) */
+    .controls {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      color: #34495e;
+    }
+    select {
+      padding: 10px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+      cursor: pointer;
+    }
+    /* 단일 출력 버튼 */
+    .btn-single {
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-single:hover { background: #2980b9; }
+    /* 전체 출력 버튼 */
+    .btn-all {
+      padding: 10px 20px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-all:hover { background: #229954; }
+    /* 결과 출력 영역 */
+    #resultArea {
+      margin-top: 10px;
+    }
+    /* 단일 단 출력 테이블 */
+    .single-table {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .dan-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #3498db;
+      margin-bottom: 15px;
+    }
+    .dan-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 16px;
+      font-family: monospace;
+    }
+    /* 홀수/짝수 행 배경색 교번 */
+    .dan-row:nth-child(odd) { background: #eaf4fb; }
+    .dan-row:nth-child(even) { background: #f8f9fa; }
+    /* 전체 출력 그리드 */
+    .all-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    /* 각 단의 카드 */
+    .dan-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    /* 카드 내 단 제목 */
+    .card-title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid;
+    }
+    /* 각 단에 다른 색상 적용 */
+    .dan-2 { border-color: #e74c3c; color: #e74c3c; }
+    .dan-3 { border-color: #e67e22; color: #e67e22; }
+    .dan-4 { border-color: #f1c40f; color: #d4ac0d; }
+    .dan-5 { border-color: #2ecc71; color: #27ae60; }
+    .dan-6 { border-color: #1abc9c; color: #17a589; }
+    .dan-7 { border-color: #3498db; color: #2980b9; }
+    .dan-8 { border-color: #9b59b6; color: #8e44ad; }
+    .dan-9 { border-color: #e91e63; color: #c2185b; }
+    /* 카드 내 각 행 */
+    .card-row {
+      font-size: 13px;
+      font-family: monospace;
+      padding: 3px 0;
+      color: #34495e;
+    }
+    /* 에러 메시지 */
+    .error-msg {
+      background: #fdecea;
+      border-left: 4px solid #e74c3c;
+      color: #c0392b;
+      padding: 15px 20px;
+      border-radius: 0 8px 8px 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>✖️ 구구단 출력기</h1>
+
+<!-- 컨트롤 영역 -->
+<div class="controls">
+  <label for="danSelect">단 선택:</label>
+
+  <!-- 드롭다운: 1~9단 -->
+  <select id="danSelect">
+    <!-- 반복문으로 생성할 수도 있으나, 여기서는 명시적으로 작성 -->
+    <option value="1">1단</option>
+    <option value="2">2단</option>
+    <option value="3">3단</option>
+    <option value="4">4단</option>
+    <option value="5" selected>5단</option>
+    <option value="6">6단</option>
+    <option value="7">7단</option>
+    <option value="8">8단</option>
+    <option value="9">9단</option>
+  </select>
+
+  <!-- 단일 출력 버튼 -->
+  <button class="btn-single" onclick="printSingleDan()">출력하기</button>
+
+  <!-- 전체 출력 버튼 -->
+  <button class="btn-all" onclick="printAllDan()">전체 출력 (2~9단)</button>
+</div>
+
+<!-- 결과 출력 영역 -->
+<div id="resultArea"></div>
+
+<script>
+  // 각 단(2~9)에 해당하는 CSS 클래스 이름 매핑
+  const danColors = {
+    2: 'dan-2', 3: 'dan-3', 4: 'dan-4', 5: 'dan-5',
+    6: 'dan-6', 7: 'dan-7', 8: 'dan-8', 9: 'dan-9'
+  };
+
+  /**
+   * 선택한 단 하나를 화면에 출력하는 함수
+   */
+  function printSingleDan() {
+    // 결과 출력 영역 요소 가져오기
+    const resultArea = document.getElementById('resultArea');
+
+    // 드롭다운에서 선택된 값을 정수로 변환
+    const dan = parseInt(document.getElementById('danSelect').value);
+
+    // 1단 선택 시 안내 메시지 출력
+    if (dan === 1) {
+      resultArea.innerHTML = `
+        <div class="error-msg">
+          ⚠️ 1단은 의미가 없어요! (1 × n = n 이므로) 2~9단을 선택해주세요.
+        </div>
+      `;
+      return; // 함수 종료
+    }
+
+    // 단 제목 HTML 생성
+    let rowsHTML = '';
+
+    // for 반복문: 1부터 9까지 각 행 생성
+    for (let i = 1; i <= 9; i++) {
+      const result = dan * i; // 곱셈 결과 계산
+      // 각 행을 템플릿 리터럴로 HTML 문자열 생성
+      rowsHTML += `
+        <div class="dan-row">
+          <span>${dan} × ${i}</span>
+          <span>=</span>
+          <span><strong>${result}</strong></span>
+        </div>
+      `;
+    }
+
+    // 전체 결과를 화면에 출력 (기존 내용 덮어쓰기)
+    resultArea.innerHTML = `
+      <div class="single-table">
+        <div class="dan-title">${dan}단</div>
+        ${rowsHTML}
+      </div>
+    `;
+  }
+
+  /**
+   * 2단부터 9단까지 전체를 가로로 출력하는 함수
+   */
+  function printAllDan() {
+    const resultArea = document.getElementById('resultArea');
+
+    // 전체 그리드 컨테이너 시작
+    let gridHTML = '<div class="all-grid">';
+
+    // 외부 반복문: 2단부터 9단까지 순환
+    for (let dan = 2; dan <= 9; dan++) {
+      const colorClass = danColors[dan]; // 단에 맞는 색상 클래스
+
+      // 각 단의 카드 시작
+      let cardHTML = `
+        <div class="dan-card">
+          <div class="card-title ${colorClass}">${dan}단</div>
+      `;
+
+      // 내부 반복문: 1부터 9까지 각 식 생성
+      for (let i = 1; i <= 9; i++) {
+        const result = dan * i; // 곱셈 결과
+        // 결과가 한 자리수면 앞에 공백 추가하여 정렬 (padStart 활용)
+        const resultStr = String(result).padStart(2, ' ');
+        cardHTML += `<div class="card-row">${dan} × ${i} = ${resultStr}</div>`;
+      }
+
+      cardHTML += '</div>'; // 카드 닫기
+      gridHTML += cardHTML;
+    }
+
+    gridHTML += '</div>'; // 그리드 닫기
+
+    // 결과를 화면에 출력 (기존 내용 덮어쓰기)
+    resultArea.innerHTML = gridHTML;
+  }
+
+  // 페이지 로드 시 기본값(5단) 출력
+  printSingleDan();
+</script>
+
+</body>
+</html>

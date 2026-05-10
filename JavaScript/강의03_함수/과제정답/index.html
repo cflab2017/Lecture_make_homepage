@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과제 03 정답 — 단위 변환기 함수 모음</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f0f4f8;
+    }
+    h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+    /* 각 변환 섹션 카드 */
+    .section-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #34495e;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ecf0f1;
+    }
+    /* 입력 행 */
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .input-row label { font-size: 14px; color: #7f8c8d; min-width: 40px; }
+    input[type="number"] {
+      flex: 1;
+      min-width: 100px;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      text-align: right;
+    }
+    input[type="number"]:focus { border-color: #3498db; outline: none; }
+    /* 변환 버튼들 */
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .conv-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .conv-btn:hover { opacity: 0.85; }
+    /* 버튼 색상 테마별 */
+    .weight-btn { background: #3498db; color: white; }
+    .dist-btn   { background: #27ae60; color: white; }
+    .temp-btn   { background: #e74c3c; color: white; }
+    .len-btn    { background: #9b59b6; color: white; }
+    /* 결과 출력 영역 */
+    .result-display {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 15px;
+      min-height: 40px;
+      color: #2c3e50;
+      border-left: 4px solid #ecf0f1;
+    }
+    /* 에러 스타일 */
+    .result-display.error {
+      background: #fdecea;
+      border-left-color: #e74c3c;
+      color: #c0392b;
+    }
+    /* 가산점 섹션 강조 */
+    .bonus-badge {
+      display: inline-block;
+      background: #f1c40f;
+      color: #7d6608;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      margin-left: 8px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📐 단위 변환기 함수 모음</h1>
+
+<!-- 섹션 1: 무게 변환 -->
+<div class="section-card">
+  <div class="section-title">⚖️ 무게 변환</div>
+  <div class="input-row">
+    <label>값:</label>
+    <input type="number" id="weightInput" placeholder="숫자 입력" step="any" value="70">
+  </div>
+  <div class="btn-group">
+    <button class="conv-btn weight-btn" onclick="runConvert('weightInput', 'weightResult', kgToLb, 'lb', 'kg → lb')">kg → lb 변환</button>
+    <button class="conv-btn weight-btn" onclick="runConvert('weightInput', 'weightResult', lbToKg, 'kg', 'lb → kg')">lb → kg 변환</button>
+  </div>
+  <div class="result-display" id="weightResult">버튼을 클릭하세요</div>
+</div>
+
+<!-- 섹션 2: 거리 변환 -->
+<div class="section-card">
+  <div class="section-title">🗺️ 거리 변환</div>
+  <div class="input-row">
+    <label>값:</label>
+    <input type="number" id="distInput" placeholder="숫자 입력" step="any" value="100">
+  </div>
+  <div class="btn-group">
+    <button class="conv-btn dist-btn" onclick="runConvert('distInput', 'distResult', kmToMile, 'mile', 'km → mile')">km → mile 변환</button>
+    <button class="conv-btn dist-btn" onclick="runConvert('distInput', 'distResult', mileToKm, 'km', 'mile → km')">mile → km 변환</button>
+  </div>
+  <div class="result-display" id="distResult">버튼을 클릭하세요</div>
+</div>
+
+<!-- 섹션 3: 온도 변환 -->
+<div class="section-card">
+  <div class="section-title">🌡️ 온도 변환</div>
+  <div class="input-row">
+    <label>값:</label>
+    <input type="number" id="tempInput" placeholder="숫자 입력" step="any" value="100">
+  </div>
+  <div class="btn-group">
+    <button class="conv-btn temp-btn" onclick="runConvert('tempInput', 'tempResult', celsiusToFahrenheit, '°F', '°C → °F')">°C → °F 변환</button>
+    <button class="conv-btn temp-btn" onclick="runConvert('tempInput', 'tempResult', fahrenheitToCelsius, '°C', '°F → °C')">°F → °C 변환</button>
+  </div>
+  <div class="result-display" id="tempResult">버튼을 클릭하세요</div>
+</div>
+
+<!-- 섹션 4: 길이 변환 (가산점) -->
+<div class="section-card">
+  <div class="section-title">📏 길이 변환 <span class="bonus-badge">가산점</span></div>
+  <div class="input-row">
+    <label>값:</label>
+    <input type="number" id="lenInput" placeholder="숫자 입력" step="any" value="30">
+  </div>
+  <div class="btn-group">
+    <button class="conv-btn len-btn" onclick="runConvert('lenInput', 'lenResult', cmToInch, 'inch', 'cm → inch')">cm → inch 변환</button>
+    <button class="conv-btn len-btn" onclick="runConvert('lenInput', 'lenResult', inchToCm, 'cm', 'inch → cm')">inch → cm 변환</button>
+  </div>
+  <div class="result-display" id="lenResult">버튼을 클릭하세요</div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  // 변환 함수 정의 (한 줄 화살표 함수)
+  // ─────────────────────────────────────────
+
+  // 무게 변환 함수
+  const kgToLb = kg => kg * 2.20462;   // 킬로그램 → 파운드 (1kg = 2.20462lb)
+  const lbToKg = lb => lb / 2.20462;   // 파운드 → 킬로그램
+
+  // 거리 변환 함수
+  const kmToMile = km => km * 0.621371;   // 킬로미터 → 마일 (1km = 0.621371mile)
+  const mileToKm = mile => mile / 0.621371; // 마일 → 킬로미터
+
+  // 온도 변환 함수
+  const celsiusToFahrenheit = c => (c * 9 / 5) + 32;  // 섭씨 → 화씨
+  const fahrenheitToCelsius = f => (f - 32) * 5 / 9;  // 화씨 → 섭씨
+
+  // 길이 변환 함수 (가산점)
+  const cmToInch = cm => cm / 2.54;    // 센티미터 → 인치 (1인치 = 2.54cm)
+  const inchToCm = inch => inch * 2.54; // 인치 → 센티미터
+
+  // ─────────────────────────────────────────
+  // 공통 변환 실행 함수 (콜백 패턴 활용)
+  // ─────────────────────────────────────────
+
+  /**
+   * 입력값을 읽어 변환 함수를 실행하고 결과를 출력하는 공통 함수
+   * @param {string} inputId - 입력 요소의 ID
+   * @param {string} resultId - 결과 출력 요소의 ID
+   * @param {Function} convertFn - 실제 변환을 수행하는 콜백 함수
+   * @param {string} unit - 결과 단위 문자열
+   * @param {string} label - 변환 방향 설명 (예: 'kg → lb')
+   */
+  function runConvert(inputId, resultId, convertFn, unit, label) {
+    // 결과를 표시할 DOM 요소 가져오기
+    const resultEl = document.getElementById(resultId);
+
+    // 입력값을 부동소수점 숫자로 변환
+    const inputValue = parseFloat(document.getElementById(inputId).value);
+
+    // 입력값이 비어 있거나 숫자가 아닌 경우 에러 처리
+    if (isNaN(inputValue)) {
+      resultEl.className = 'result-display error'; // 에러 스타일 적용
+      resultEl.textContent = '⚠️ 올바른 숫자를 입력해주세요.';
+      return; // 함수 종료
+    }
+
+    // 콜백 함수(convertFn)를 호출하여 실제 변환 수행
+    const result = convertFn(inputValue);
+
+    // 에러 스타일 제거 후 결과 출력
+    resultEl.className = 'result-display';
+    // 템플릿 리터럴로 결과 문자열 생성, 소수점 3자리 표시
+    resultEl.textContent = `${label}: ${inputValue} → ${result.toFixed(3)} ${unit}`;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>박스 모델 시각화</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>박스 모델 시각화 데모</h1>
+    <p>각 영역(content / padding / border / margin)을 색상으로 구분하여 확인합니다.</p>
+  </header>
+
+  <main class="container">
+
+    <!-- 박스 모델 다이어그램 -->
+    <section class="card">
+      <h2>1. 박스 모델 구조</h2>
+      <div class="diagram-wrapper">
+        <div class="box-margin">
+          <span class="label label-margin">margin</span>
+          <div class="box-border">
+            <span class="label label-border">border</span>
+            <div class="box-padding">
+              <span class="label label-padding">padding</span>
+              <div class="box-content">
+                <span class="label label-content">content</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- box-sizing 비교 -->
+    <section class="card">
+      <h2>2. box-sizing 비교</h2>
+      <p class="desc">두 박스 모두 <code>width: 300px</code>이지만 실제 크기가 다릅니다.</p>
+      <div class="sizing-demo">
+        <div class="sizing-content-box">
+          <strong>content-box (기본값)</strong>
+          <p>width: 300px<br>padding: 20px<br>border: 4px</p>
+          <p class="result">실제 너비: 348px</p>
+        </div>
+        <div class="sizing-border-box">
+          <strong>border-box (권장)</strong>
+          <p>width: 300px<br>padding: 20px<br>border: 4px</p>
+          <p class="result">실제 너비: 300px</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- display 속성 비교 -->
+    <section class="card">
+      <h2>3. display 속성 비교</h2>
+
+      <h3>display: block</h3>
+      <p>블록 요소는 한 줄을 독차지합니다.</p>
+      <div class="display-block">블록 A</div>
+      <div class="display-block">블록 B</div>
+
+      <h3>display: inline</h3>
+      <p>인라인 요소는 텍스트처럼 나란히 배치됩니다. (width, height 무시)</p>
+      <span class="display-inline">인라인 A</span>
+      <span class="display-inline">인라인 B</span>
+      <span class="display-inline">인라인 C</span>
+
+      <h3>display: inline-block</h3>
+      <p>인라인처럼 나란히 배치되면서 width, height 설정이 가능합니다.</p>
+      <span class="display-inline-block">인라인블록 A</span>
+      <span class="display-inline-block">인라인블록 B</span>
+      <span class="display-inline-block">인라인블록 C</span>
+    </section>
+
+    <!-- overflow -->
+    <section class="card">
+      <h2>4. overflow 속성</h2>
+      <div class="overflow-demo">
+        <div class="overflow-visible">
+          <strong>overflow: visible</strong>
+          <p>내용이 넘치면 박스 밖으로 튀어나옵니다. 기본값입니다. 이 텍스트는 박스를 넘어갑니다!</p>
+        </div>
+        <div class="overflow-hidden">
+          <strong>overflow: hidden</strong>
+          <p>내용이 넘치면 잘려서 보이지 않습니다. 이 텍스트는 박스를 넘어가도 숨겨집니다!</p>
+        </div>
+        <div class="overflow-auto">
+          <strong>overflow: auto</strong>
+          <p>내용이 넘치면 스크롤이 생깁니다. 이 텍스트는 길어서 스크롤이 필요합니다. 아래로 스크롤해 보세요. 더 많은 내용이 있습니다!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- margin 겹침 현상 -->
+    <section class="card">
+      <h2>5. margin 겹침 현상</h2>
+      <p class="desc">
+        아래 두 박스의 margin-bottom/top은 각각 30px이지만,<br>
+        실제 간격은 <strong>30px</strong>입니다 (합산 60px이 아님).
+      </p>
+      <div class="collapse-demo">
+        <div class="collapse-box">
+          margin-bottom: 30px
+        </div>
+        <div class="collapse-box">
+          margin-top: 30px
+        </div>
+      </div>
+    </section>
+
+    <!-- padding을 이용한 중앙 배치 -->
+    <section class="card">
+      <h2>6. margin auto로 수평 중앙 배치</h2>
+      <div class="centered-box">
+        margin: 0 auto<br>
+        width: 200px
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <p>박스 모델 시각화 예제 &copy; 2025</p>
+  </footer>
+
+</body>
+</html>

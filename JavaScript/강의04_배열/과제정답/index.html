@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과제 04 정답 — 영화 즐겨찾기</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 550px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #1a1a2e;
+      color: white;
+    }
+    h1 {
+      text-align: center;
+      color: #e2b96f;
+      margin-bottom: 30px;
+    }
+    .app {
+      background: #16213e;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    /* 추가 입력폼 */
+    .add-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .add-form input {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #0f3460;
+      border-radius: 8px;
+      font-size: 15px;
+      background: #0f3460;
+      color: white;
+    }
+    .add-form input::placeholder { color: #7f8c8d; }
+    .add-form input:focus { border-color: #e2b96f; outline: none; }
+    .add-form button {
+      padding: 12px 18px;
+      background: #e2b96f;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .add-form button:hover { background: #c9a055; }
+    /* 경고 메시지 */
+    .warning {
+      background: #5d1a1a;
+      color: #f1948a;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    /* 검색 입력창 */
+    .search-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #0f3460;
+      border-radius: 8px;
+      font-size: 15px;
+      background: #0f3460;
+      color: white;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+    .search-input::placeholder { color: #7f8c8d; }
+    .search-input:focus { border-color: #3498db; outline: none; }
+    /* 통계 영역 */
+    .stats {
+      font-size: 13px;
+      color: #7f8c8d;
+      margin-bottom: 10px;
+    }
+    /* 영화 목록 */
+    .movie-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .movie-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin: 6px 0;
+      background: #0f3460;
+      transition: background 0.2s;
+    }
+    .movie-item:hover { background: #1a4a8a; }
+    /* 영화 제목 */
+    .movie-title {
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .movie-icon { font-size: 18px; }
+    /* 삭제 버튼 */
+    .delete-btn {
+      padding: 5px 12px;
+      background: #e74c3c22;
+      color: #e74c3c;
+      border: 1px solid #e74c3c44;
+      border-radius: 5px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .delete-btn:hover { background: #e74c3c44; }
+    /* 빈 상태 */
+    .empty-msg {
+      text-align: center;
+      color: #7f8c8d;
+      padding: 30px 0;
+      font-size: 15px;
+    }
+    /* 전체 삭제 버튼 */
+    .clear-all-btn {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      color: #e74c3c;
+      border: 1px solid #e74c3c44;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background 0.2s;
+    }
+    .clear-all-btn:hover { background: #e74c3c22; }
+    /* 검색 하이라이트 */
+    mark {
+      background: #e2b96f;
+      color: #1a1a2e;
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎬 영화 즐겨찾기</h1>
+
+<div class="app">
+
+  <!-- 영화 추가 폼 -->
+  <div class="add-form">
+    <input type="text" id="movieInput" placeholder="영화 제목을 입력하세요" maxlength="50">
+    <button onclick="addMovie()">추가</button>
+  </div>
+
+  <!-- 중복 경고 메시지 (기본 숨김) -->
+  <div class="warning" id="warningMsg"></div>
+
+  <!-- 검색창 -->
+  <input
+    type="text"
+    class="search-input"
+    id="searchInput"
+    placeholder="🔍 영화 검색..."
+    oninput="render()"
+  >
+
+  <!-- 통계 -->
+  <div class="stats" id="statsText"></div>
+
+  <!-- 영화 목록 -->
+  <ul class="movie-list" id="movieList"></ul>
+
+  <!-- 전체 삭제 버튼 -->
+  <button class="clear-all-btn" onclick="clearAll()">전체 삭제</button>
+
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  // 초기 데이터: 영화 제목 배열
+  // ─────────────────────────────────────────
+  let movies = [
+    "인터스텔라",
+    "기생충",
+    "어벤져스: 엔드게임",
+    "타이타닉",
+    "라라랜드"
+  ];
+
+  // ─────────────────────────────────────────
+  // 렌더링 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 현재 검색어를 기반으로 목록을 필터링하여 화면에 출력하는 함수
+   * filter로 검색, map으로 HTML 변환
+   */
+  function render() {
+    const list = document.getElementById('movieList');
+    const statsText = document.getElementById('statsText');
+
+    // 검색어를 소문자로 변환 (대소문자 구분 없이 검색)
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+    // filter: 검색어를 포함하는 영화만 추출
+    const filtered = searchTerm
+      ? movies.filter(m => m.toLowerCase().includes(searchTerm))
+      : movies; // 검색어가 없으면 전체 표시
+
+    // 통계 텍스트 업데이트
+    if (searchTerm) {
+      statsText.textContent = `검색 결과: ${filtered.length}개 / 전체 ${movies.length}개`;
+    } else {
+      statsText.textContent = `전체 ${movies.length}개의 영화`;
+    }
+
+    // 빈 상태 처리
+    if (filtered.length === 0) {
+      list.innerHTML = `<div class="empty-msg">🎞️ ${searchTerm ? '검색 결과가 없습니다.' : '영화를 추가해보세요!'}</div>`;
+      return;
+    }
+
+    // map으로 각 영화를 <li> HTML로 변환
+    // indexOf로 원본 배열에서의 실제 인덱스를 찾아 삭제에 사용
+    list.innerHTML = filtered.map(movie => {
+      // 원본 배열에서 실제 인덱스 찾기 (삭제 시 필요)
+      const originalIndex = movies.indexOf(movie);
+
+      // 검색어 하이라이트 처리
+      let displayTitle = movie;
+      if (searchTerm) {
+        // 검색어 위치를 찾아 <mark> 태그로 감싸기 (대소문자 무시)
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        displayTitle = movie.replace(regex, '<mark>$1</mark>');
+      }
+
+      return `
+        <li class="movie-item">
+          <div class="movie-title">
+            <span class="movie-icon">🎬</span>
+            <span>${displayTitle}</span>
+          </div>
+          <button class="delete-btn" onclick="deleteMovie(${originalIndex})">삭제</button>
+        </li>
+      `;
+    }).join(''); // 배열을 하나의 HTML 문자열로 합치기
+  }
+
+  // ─────────────────────────────────────────
+  // 영화 추가 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 입력창의 영화 제목을 배열에 추가하는 함수
+   * includes로 중복 검사 후 push로 추가
+   */
+  function addMovie() {
+    const input = document.getElementById('movieInput');
+    const warning = document.getElementById('warningMsg');
+    const title = input.value.trim(); // 앞뒤 공백 제거
+
+    // 경고 메시지 초기화 (숨김)
+    warning.style.display = 'none';
+
+    // 빈 제목 방지
+    if (title === '') return;
+
+    // includes로 중복 확인
+    if (movies.includes(title)) {
+      // 이미 존재하면 경고 메시지 표시
+      warning.textContent = `⚠️ "${title}"은(는) 이미 추가된 영화입니다.`;
+      warning.style.display = 'block';
+      return;
+    }
+
+    // 배열에 새 영화 추가 (push)
+    movies.push(title);
+
+    // 입력창 초기화
+    input.value = '';
+    input.focus();
+
+    // 화면 업데이트
+    render();
+  }
+
+  // ─────────────────────────────────────────
+  // 영화 삭제 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 특정 인덱스의 영화를 삭제하는 함수
+   * filter로 해당 인덱스의 항목을 제외한 새 배열 생성
+   * @param {number} index - 삭제할 영화의 인덱스
+   */
+  function deleteMovie(index) {
+    // filter: 해당 인덱스가 아닌 항목만 남기기
+    movies = movies.filter((_, i) => i !== index);
+    render(); // 화면 업데이트
+  }
+
+  /**
+   * 모든 영화를 삭제하는 함수
+   */
+  function clearAll() {
+    if (movies.length === 0) return;
+    if (!confirm('모든 영화를 삭제할까요?')) return;
+    movies = []; // 빈 배열로 초기화
+    render();
+  }
+
+  // Enter 키로 영화 추가
+  document.getElementById('movieInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addMovie();
+  });
+
+  // 초기 렌더링
+  render();
+</script>
+
+</body>
+</html>

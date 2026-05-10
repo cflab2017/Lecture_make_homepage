@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주간 수업 시간표</title>
+</head>
+<body>
+
+  <h1>2026년 1학기 주간 수업 시간표</h1>
+  <p>컴퓨터공학과 2학년 1반 - 담임: 김선생님</p>
+
+  <table border="1">
+    <!-- caption: 테이블의 제목. 표 안에 첫 번째로 작성합니다 -->
+    <caption>주간 수업 시간표 (월~금)</caption>
+
+    <thead>
+      <!-- thead: 테이블의 머리글 행들을 묶는 영역 -->
+      <tr>
+        <!-- tr: 하나의 행(가로줄) -->
+        <th scope="col">교시</th>
+        <!-- th: 머리글 셀. 굵게, 가운데 정렬이 기본값 -->
+        <!-- scope="col": 이 th가 열(세로 방향) 전체의 제목임을 의미 -->
+        <th scope="col">시간</th>
+        <th scope="col">월요일</th>
+        <th scope="col">화요일</th>
+        <th scope="col">수요일</th>
+        <th scope="col">목요일</th>
+        <th scope="col">금요일</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- tbody: 테이블의 본문 데이터 행들을 묶는 영역 -->
+
+      <!-- 1교시 -->
+      <tr>
+        <th scope="row">1교시</th>
+        <!-- scope="row": 이 th가 행(가로 방향) 전체의 제목임을 의미 -->
+        <td>09:00~09:50</td>
+        <td>HTML/CSS</td>
+        <td>데이터베이스</td>
+        <td>알고리즘</td>
+        <td>HTML/CSS</td>
+        <td>운영체제</td>
+      </tr>
+
+      <!-- 2교시 -->
+      <tr>
+        <th scope="row">2교시</th>
+        <td>10:00~10:50</td>
+        <td>HTML/CSS</td>
+        <td>데이터베이스</td>
+        <td>알고리즘</td>
+        <td>JavaScript</td>
+        <td>운영체제</td>
+      </tr>
+
+      <!-- 3교시 -->
+      <tr>
+        <th scope="row">3교시</th>
+        <td>11:00~11:50</td>
+        <td>JavaScript</td>
+        <td>컴퓨터네트워크</td>
+        <td>자료구조</td>
+        <td>JavaScript</td>
+        <td>캡스톤디자인</td>
+      </tr>
+
+      <!-- 점심시간: colspan으로 요일 5개 칸을 하나로 병합 -->
+      <tr>
+        <th scope="row">점심</th>
+        <td>12:00~13:00</td>
+        <td colspan="5">점심 식사 및 휴식</td>
+        <!-- colspan="5": 이 셀이 5개의 열을 차지 (월~금 5일) -->
+      </tr>
+
+      <!-- 4교시 -->
+      <tr>
+        <th scope="row">4교시</th>
+        <td>13:00~13:50</td>
+        <td>소프트웨어공학</td>
+        <td>컴퓨터네트워크</td>
+        <td>자료구조</td>
+        <td>데이터베이스</td>
+        <td>캡스톤디자인</td>
+      </tr>
+
+      <!-- 5교시 -->
+      <tr>
+        <th scope="row">5교시</th>
+        <td>14:00~14:50</td>
+        <td>소프트웨어공학</td>
+        <td>알고리즘</td>
+        <td>자료구조</td>
+        <td>데이터베이스</td>
+        <td>캡스톤디자인</td>
+      </tr>
+
+      <!-- 6교시 -->
+      <tr>
+        <th scope="row">6교시</th>
+        <td>15:00~15:50</td>
+        <td>자유 실습</td>
+        <td>알고리즘</td>
+        <td>컴퓨터네트워크</td>
+        <!-- rowspan: 목요일 자유시간이 6교시와 7교시 2행을 차지 -->
+        <td rowspan="2">자유 활동</td>
+        <!-- rowspan="2": 이 셀이 2개의 행(세로)을 차지 -->
+        <td>동아리 활동</td>
+      </tr>
+
+      <!-- 7교시 -->
+      <tr>
+        <th scope="row">7교시</th>
+        <td>16:00~16:50</td>
+        <td>자유 실습</td>
+        <td>특강 (선택)</td>
+        <td>컴퓨터네트워크</td>
+        <!-- rowspan으로 병합된 셀이 이 자리를 차지하므로 td를 작성하지 않음 -->
+        <td>동아리 활동</td>
+      </tr>
+
+    </tbody>
+
+    <tfoot>
+      <!-- tfoot: 테이블의 바닥글 행을 묶는 영역 (주로 합계, 요약) -->
+      <tr>
+        <td colspan="2">주간 수업 시수</td>
+        <!-- colspan="2": 교시와 시간 두 칸을 하나로 병합 -->
+        <td>14시간</td>
+        <td>14시간</td>
+        <td>14시간</td>
+        <td>12시간</td>
+        <td>14시간</td>
+      </tr>
+    </tfoot>
+
+  </table>
+
+  <hr>
+
+  <h2>과목 담당 교수</h2>
+
+  <table border="1">
+    <caption>2026년 1학기 담당 교수 목록</caption>
+    <thead>
+      <tr>
+        <th scope="col">과목명</th>
+        <th scope="col">담당 교수</th>
+        <th scope="col">강의실</th>
+        <th scope="col">연락처</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>HTML/CSS</td>
+        <!-- rowspan="2": HTML/CSS 담당 교수가 JavaScript도 담당 -->
+        <td rowspan="2">이웹 교수</td>
+        <td>공학관 301</td>
+        <td rowspan="2">web@university.ac.kr</td>
+        <!-- rowspan="2": 이메일 셀도 두 행에 걸쳐 표시 -->
+      </tr>
+      <tr>
+        <td>JavaScript</td>
+        <!-- 위 rowspan으로 인해 이 행에 교수, 이메일 셀 생략 -->
+        <td>공학관 302</td>
+      </tr>
+      <tr>
+        <td>데이터베이스</td>
+        <td>박데이터 교수</td>
+        <td>공학관 401</td>
+        <td>db@university.ac.kr</td>
+      </tr>
+      <tr>
+        <td>알고리즘</td>
+        <td rowspan="2">최알고 교수</td>
+        <!-- rowspan="2": 알고리즘과 자료구조 모두 담당 -->
+        <td>정보관 201</td>
+        <td rowspan="2">algo@university.ac.kr</td>
+      </tr>
+      <tr>
+        <td>자료구조</td>
+        <td>정보관 201</td>
+      </tr>
+      <tr>
+        <td>컴퓨터네트워크</td>
+        <td>정네트 교수</td>
+        <td>정보관 301</td>
+        <td>network@university.ac.kr</td>
+      </tr>
+      <tr>
+        <td>운영체제</td>
+        <td>김운영 교수</td>
+        <td>공학관 101</td>
+        <td>os@university.ac.kr</td>
+      </tr>
+      <tr>
+        <td>소프트웨어공학</td>
+        <td>홍소공 교수</td>
+        <td>공학관 201</td>
+        <td>se@university.ac.kr</td>
+      </tr>
+      <tr>
+        <td>캡스톤디자인</td>
+        <!-- colspan="2": 강의실과 연락처를 합쳐서 "팀별 별도 안내" 표시 -->
+        <td>지도교수 선택</td>
+        <td colspan="2">팀별 지도교수 배정 후 별도 안내</td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>
