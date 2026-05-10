@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>타이포그래피 쇼케이스</title>
+  <!-- Google Fonts: Noto Sans KR (한국어 웹 폰트) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="page-header">
+    <h1 class="title-main">타이포그래피 쇼케이스</h1>
+    <p class="title-sub">색상과 폰트를 마스터하는 CSS 실습</p>
+  </header>
+
+  <main class="container">
+
+    <!-- 색상 표현법 -->
+    <section class="card">
+      <h2>1. 색상 표현법</h2>
+      <div class="color-demos">
+        <div class="color-chip chip-name">
+          <span>color: red</span>
+          <p>색상 이름</p>
+        </div>
+        <div class="color-chip chip-hex">
+          <span>#e74c3c</span>
+          <p>HEX 코드</p>
+        </div>
+        <div class="color-chip chip-rgb">
+          <span>rgb(46,204,113)</span>
+          <p>RGB</p>
+        </div>
+        <div class="color-chip chip-rgba">
+          <span>rgba(52,152,219,0.7)</span>
+          <p>RGBA</p>
+        </div>
+        <div class="color-chip chip-hsl">
+          <span>hsl(270,60%,50%)</span>
+          <p>HSL</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 폰트 패밀리 -->
+    <section class="card">
+      <h2>2. 폰트 패밀리 비교</h2>
+      <p class="font-noto">Noto Sans KR: 한글 웹에서 가장 많이 사용되는 폰트입니다. 가독성이 뛰어납니다.</p>
+      <p class="font-playfair">Playfair Display: Elegant serif font for headings and display text.</p>
+      <p class="font-mono">Monospace: 코드 블록에 자주 사용됩니다. const greeting = "Hello";</p>
+      <p class="font-serif">Serif: 전통적인 명조 계열 폰트입니다. 인쇄물 느낌을 줍니다.</p>
+    </section>
+
+    <!-- 폰트 굵기 -->
+    <section class="card">
+      <h2>3. 폰트 굵기 (font-weight)</h2>
+      <p class="weight-300">300 — Light: 얇고 가벼운 텍스트</p>
+      <p class="weight-400">400 — Normal: 일반적인 본문 텍스트</p>
+      <p class="weight-700">700 — Bold: 굵고 강조된 텍스트</p>
+      <p class="weight-900">900 — Black: 매우 굵은 텍스트</p>
+    </section>
+
+    <!-- 글자 크기 -->
+    <section class="card">
+      <h2>4. 글자 크기 (font-size)</h2>
+      <p class="size-12">12px — 매우 작은 텍스트 (주석, 캡션)</p>
+      <p class="size-14">14px — 작은 텍스트</p>
+      <p class="size-16">16px — 기본 크기 (본문 권장)</p>
+      <p class="size-20">20px — 약간 큰 텍스트 (소제목)</p>
+      <p class="size-28">28px — 큰 텍스트 (제목)</p>
+    </section>
+
+    <!-- 줄 간격과 글자 간격 -->
+    <section class="card">
+      <h2>5. 줄 간격 & 글자 간격</h2>
+      <div class="spacing-demo">
+        <div>
+          <h3>line-height: 1.0 (좁음)</h3>
+          <p class="lh-10">한국어 텍스트는 줄 간격이 중요합니다. 좁은 줄 간격은 읽기 불편합니다. 이처럼 텍스트가 빽빽하게 느껴집니다.</p>
+        </div>
+        <div>
+          <h3>line-height: 1.8 (적당)</h3>
+          <p class="lh-18">한국어 텍스트는 줄 간격이 중요합니다. 적당한 줄 간격은 가독성을 크게 높입니다. 이처럼 텍스트가 편안하게 읽힙니다.</p>
+        </div>
+      </div>
+      <div class="letter-spacing-demo">
+        <p class="ls-tight">letter-spacing: -1px — 글자가 촘촘하게</p>
+        <p class="ls-normal">letter-spacing: 0 — 기본값</p>
+        <p class="ls-wide">letter-spacing: 3px — 글자가 넓게 펼쳐짐</p>
+      </div>
+    </section>
+
+    <!-- 텍스트 꾸미기 -->
+    <section class="card">
+      <h2>6. 텍스트 꾸미기</h2>
+      <p class="deco-underline">text-decoration: underline — 밑줄</p>
+      <p class="deco-line-through">text-decoration: line-through — 취소선</p>
+      <p class="transform-upper">text-transform: uppercase — 모두 대문자</p>
+      <p class="transform-capitalize">text-transform: capitalize — 첫 글자 대문자</p>
+    </section>
+
+    <!-- CSS 변수 -->
+    <section class="card">
+      <h2>7. CSS 변수 활용</h2>
+      <p>아래 색상들은 모두 <code>:root</code>에 선언된 CSS 변수로 적용되었습니다.</p>
+      <div class="var-demo">
+        <div class="var-primary">--color-primary</div>
+        <div class="var-secondary">--color-secondary</div>
+        <div class="var-accent">--color-accent</div>
+      </div>
+      <p class="var-text">변수 하나를 바꾸면 이 색상이 적용된 모든 요소가 한번에 바뀝니다!</p>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <p>타이포그래피 쇼케이스 &copy; 2025 | Noto Sans KR via Google Fonts</p>
+  </footer>
+
+</body>
+</html>
