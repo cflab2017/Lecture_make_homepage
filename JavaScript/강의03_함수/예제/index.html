@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>강의 03 — 함수 예제 (사칙연산 계산기)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 420px;
+      margin: 60px auto;
+      padding: 0 20px;
+      background: #f0f4f8;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+    .calculator {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    /* 입력 영역 */
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    input[type="number"] {
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input[type="number"]:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    .separator {
+      text-align: center;
+      font-size: 20px;
+      color: #7f8c8d;
+    }
+    /* 연산자 버튼 그리드 */
+    .operators {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .op-btn {
+      padding: 16px;
+      font-size: 24px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .op-btn:active { transform: scale(0.95); }
+    .op-btn.add { background: #3498db; color: white; }
+    .op-btn.sub { background: #e74c3c; color: white; }
+    .op-btn.mul { background: #f39c12; color: white; }
+    .op-btn.div { background: #27ae60; color: white; }
+    .op-btn:hover { opacity: 0.85; }
+    /* 결과 영역 */
+    .result-box {
+      background: #f8f9fa;
+      border: 2px solid #ecf0f1;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      min-height: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .result-expr {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-bottom: 4px;
+    }
+    .result-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .result-error {
+      color: #e74c3c;
+      font-size: 16px;
+    }
+    /* 히스토리 영역 */
+    .history-title {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin: 20px 0 8px;
+      font-weight: bold;
+    }
+    .history-list {
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .history-item {
+      font-size: 14px;
+      font-family: monospace;
+      padding: 5px 10px;
+      border-radius: 4px;
+      background: #f8f9fa;
+      margin: 4px 0;
+      color: #555;
+    }
+    .clear-btn {
+      width: 100%;
+      padding: 10px;
+      background: #ecf0f1;
+      color: #7f8c8d;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .clear-btn:hover { background: #dfe6e9; }
+  </style>
+</head>
+<body>
+
+<h1>🔢 사칙연산 계산기</h1>
+
+<div class="calculator">
+
+  <!-- 숫자 입력 영역 -->
+  <div class="inputs">
+    <input type="number" id="numA" value="10" placeholder="첫 번째 수">
+    <div class="separator">?</div>
+    <input type="number" id="numB" value="3" placeholder="두 번째 수">
+  </div>
+
+  <!-- 연산자 버튼 -->
+  <div class="operators">
+    <button class="op-btn add" onclick="calculate('add')">+</button>
+    <button class="op-btn sub" onclick="calculate('sub')">−</button>
+    <button class="op-btn mul" onclick="calculate('mul')">×</button>
+    <button class="op-btn div" onclick="calculate('div')">÷</button>
+  </div>
+
+  <!-- 결과 출력 -->
+  <div class="result-box" id="resultBox">
+    <div class="result-expr">연산자를 선택하세요</div>
+  </div>
+
+  <!-- 계산 히스토리 -->
+  <div class="history-title">계산 기록</div>
+  <div class="history-list" id="historyList">
+    <div class="history-item" style="color:#bbb">아직 계산 기록이 없습니다.</div>
+  </div>
+  <button class="clear-btn" onclick="clearHistory()">기록 지우기</button>
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  // 각 연산을 독립된 함수로 분리
+  // ─────────────────────────────────────────
+
+  /**
+   * 덧셈 함수
+   * @param {number} a - 첫 번째 피연산자
+   * @param {number} b - 두 번째 피연산자
+   * @returns {number} a + b
+   */
+  const add = (a, b) => a + b;
+
+  /**
+   * 뺄셈 함수
+   * @param {number} a - 첫 번째 피연산자
+   * @param {number} b - 두 번째 피연산자
+   * @returns {number} a - b
+   */
+  const subtract = (a, b) => a - b;
+
+  /**
+   * 곱셈 함수
+   * @param {number} a - 첫 번째 피연산자
+   * @param {number} b - 두 번째 피연산자
+   * @returns {number} a * b
+   */
+  const multiply = (a, b) => a * b;
+
+  /**
+   * 나눗셈 함수 (0으로 나누기 예외 처리 포함)
+   * @param {number} a - 피제수
+   * @param {number} b - 제수
+   * @returns {number|null} a / b, 또는 b가 0이면 null
+   */
+  const divide = (a, b) => {
+    if (b === 0) return null; // 0으로 나누기 불가
+    return a / b;
+  };
+
+  // ─────────────────────────────────────────
+  // 연산자 정보를 객체로 관리 (콜백 패턴 활용)
+  // ─────────────────────────────────────────
+  const operations = {
+    add: { fn: add,      symbol: '+', label: '더하기' },
+    sub: { fn: subtract, symbol: '−', label: '빼기'   },
+    mul: { fn: multiply, symbol: '×', label: '곱하기' },
+    div: { fn: divide,   symbol: '÷', label: '나누기' },
+  };
+
+  // 계산 기록 배열
+  const history = [];
+
+  /**
+   * 결과를 소수점 처리하는 헬퍼 함수
+   * @param {number} value - 처리할 숫자
+   * @returns {string} 소수점이 있으면 최대 4자리, 없으면 정수
+   */
+  function formatNumber(value) {
+    // Number.isInteger로 정수 여부 확인
+    if (Number.isInteger(value)) {
+      return String(value);
+    }
+    return parseFloat(value.toFixed(4)).toString();
+  }
+
+  /**
+   * 계산을 실행하고 결과를 화면에 표시하는 메인 함수
+   * @param {string} opKey - 연산 종류 ('add'|'sub'|'mul'|'div')
+   */
+  function calculate(opKey) {
+    const resultBox = document.getElementById('resultBox');
+
+    // 입력값을 부동소수점으로 변환
+    const a = parseFloat(document.getElementById('numA').value);
+    const b = parseFloat(document.getElementById('numB').value);
+
+    // 입력값 유효성 검사
+    if (isNaN(a) || isNaN(b)) {
+      resultBox.innerHTML = `<div class="result-error">⚠️ 숫자를 입력해주세요.</div>`;
+      return;
+    }
+
+    // 해당 연산 정보 가져오기
+    const op = operations[opKey];
+
+    // 함수 호출 (함수를 변수처럼 저장했다가 호출 — 함수 표현식의 활용)
+    const result = op.fn(a, b);
+
+    // 나눗셈에서 0으로 나누기 감지
+    if (result === null) {
+      resultBox.innerHTML = `
+        <div class="result-expr">${a} ${op.symbol} ${b}</div>
+        <div class="result-error">⚠️ 0으로 나눌 수 없습니다.</div>
+      `;
+      return;
+    }
+
+    // 결과 텍스트 생성
+    const formatted = formatNumber(result);
+    const expr = `${a} ${op.symbol} ${b} = ${formatted}`;
+
+    // 결과 화면에 출력
+    resultBox.innerHTML = `
+      <div class="result-expr">${a} ${op.symbol} ${b}</div>
+      <div class="result-value">${formatted}</div>
+    `;
+
+    // 히스토리에 기록 추가
+    addToHistory(expr);
+  }
+
+  /**
+   * 계산 기록을 히스토리 배열에 추가하고 화면을 갱신하는 함수
+   * @param {string} expr - 기록할 계산식 문자열
+   */
+  function addToHistory(expr) {
+    // 배열 맨 앞에 추가 (최신 항목이 위로)
+    history.unshift(expr);
+
+    // 최대 10개까지만 보관
+    if (history.length > 10) history.pop();
+
+    // 히스토리 목록 렌더링
+    renderHistory();
+  }
+
+  /**
+   * 히스토리 목록을 화면에 렌더링하는 함수
+   */
+  function renderHistory() {
+    const list = document.getElementById('historyList');
+
+    if (history.length === 0) {
+      list.innerHTML = '<div class="history-item" style="color:#bbb">아직 계산 기록이 없습니다.</div>';
+      return;
+    }
+
+    // map으로 각 기록을 HTML로 변환 후 join으로 합치기
+    list.innerHTML = history
+      .map(item => `<div class="history-item">${item}</div>`)
+      .join('');
+  }
+
+  /**
+   * 히스토리를 초기화하는 함수
+   */
+  function clearHistory() {
+    history.length = 0; // 배열 비우기
+    renderHistory();
+  }
+</script>
+
+</body>
+</html>

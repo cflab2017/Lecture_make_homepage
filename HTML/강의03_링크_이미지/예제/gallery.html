@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>홍길동의 포트폴리오 갤러리</title>
+</head>
+<body>
+
+  <h1>홍길동의 포트폴리오</h1>
+  <p>안녕하세요! 웹 개발을 공부하고 있는 홍길동입니다.</p>
+
+  <!-- ====== 소셜 링크 모음 ====== -->
+  <h2>나의 채널 &amp; 링크</h2>
+
+  <ul>
+    <!-- 외부 링크는 target="_blank"와 rel="noopener noreferrer"를 함께 사용 -->
+    <li>
+      <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+        GitHub - 코드 저장소
+      </a>
+    </li>
+    <li>
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+        LinkedIn - 직업 프로필
+      </a>
+    </li>
+    <li>
+      <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+        YouTube - 튜토리얼 채널
+      </a>
+    </li>
+    <li>
+      <!-- mailto: 를 사용하면 이메일 앱이 열립니다 -->
+      <a href="mailto:hong@example.com">이메일 보내기: hong@example.com</a>
+    </li>
+    <li>
+      <!-- tel: 를 사용하면 모바일에서 전화 앱이 열립니다 -->
+      <a href="tel:010-1234-5678">전화: 010-1234-5678</a>
+    </li>
+  </ul>
+
+  <!-- ====== 페이지 내 이동 네비게이션 ====== -->
+  <h2>갤러리 목차</h2>
+  <ul>
+    <!-- href="#id" 형식으로 같은 페이지 내 특정 위치로 이동 -->
+    <li><a href="#nature">자연 사진</a></li>
+    <li><a href="#city">도시 사진</a></li>
+    <li><a href="#abstract">추상 이미지</a></li>
+    <li><a href="#contact">연락처</a></li>
+  </ul>
+
+  <hr>
+
+  <!-- ====== 자연 사진 갤러리 ====== -->
+  <!-- id="nature" 를 통해 위의 앵커 링크가 이 위치로 이동합니다 -->
+  <h2 id="nature">자연 사진</h2>
+
+  <!-- figure: 이미지와 캡션을 의미 있게 묶는 태그 -->
+  <figure>
+    <!-- 온라인 이미지 URL 사용. alt는 이미지 내용을 설명하는 텍스트 -->
+    <img
+      src="https://picsum.photos/seed/forest/600/400"
+      alt="울창한 숲 속 나무들이 빛을 받아 빛나는 모습"
+      width="600"
+    >
+    <!-- figcaption: figure 요소의 설명(캡션) -->
+    <figcaption>사진 1: 빛이 스며드는 숲 (출처: Lorem Picsum)</figcaption>
+  </figure>
+
+  <figure>
+    <img
+      src="https://picsum.photos/seed/mountain/600/400"
+      alt="눈 덮인 산봉우리와 파란 하늘"
+      width="600"
+    >
+    <figcaption>사진 2: 설산의 아침 (출처: Lorem Picsum)</figcaption>
+  </figure>
+
+  <figure>
+    <img
+      src="https://picsum.photos/seed/ocean/600/400"
+      alt="해질녘 노을이 물드는 바다와 파도"
+      width="600"
+    >
+    <figcaption>사진 3: 황혼의 바다 (출처: Lorem Picsum)</figcaption>
+  </figure>
+
+  <!-- 페이지 위로 이동하는 링크 -->
+  <p><a href="#">맨 위로 이동</a></p>
+
+  <hr>
+
+  <!-- ====== 도시 사진 갤러리 ====== -->
+  <h2 id="city">도시 사진</h2>
+
+  <figure>
+    <img
+      src="https://picsum.photos/seed/city1/600/400"
+      alt="밤에 불빛이 화려한 도심 야경"
+      width="600"
+    >
+    <figcaption>사진 4: 도심 야경 (출처: Lorem Picsum)</figcaption>
+  </figure>
+
+  <figure>
+    <img
+      src="https://picsum.photos/seed/building/600/400"
+      alt="현대적인 유리 고층 빌딩 외관"
+      width="600"
+    >
+    <figcaption>사진 5: 현대 건축물 (출처: Lorem Picsum)</figcaption>
+  </figure>
+
+  <!-- 이미지에 링크 연결 - 이미지를 클릭하면 해당 사이트로 이동 -->
+  <figure>
+    <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer">
+      <img
+        src="https://picsum.photos/seed/bridge/600/400"
+        alt="도시를 가로지르는 대형 현수교 (클릭하면 Unsplash로 이동)"
+        width="600"
+      >
+    </a>
+    <figcaption>사진 6: 현수교 (클릭하면 Unsplash 사이트로 이동합니다)</figcaption>
+  </figure>
+
+  <p><a href="#">맨 위로 이동</a></p>
+
+  <hr>
+
+  <!-- ====== 추상 이미지 갤러리 ====== -->
+  <h2 id="abstract">추상 이미지</h2>
+
+  <!-- width와 height를 모두 지정하면 비율이 달라질 수 있음 -->
+  <!-- width만 지정하면 높이는 자동으로 비율에 맞게 조정됨 -->
+  <figure>
+    <img
+      src="https://picsum.photos/seed/abstract1/600/600"
+      alt="다채로운 색상의 추상적인 패턴"
+      width="400"
+      height="400"
+    >
+    <figcaption>이미지 7: 컬러풀 추상 패턴 (400x400 픽셀)</figcaption>
+  </figure>
+
+  <figure>
+    <img
+      src="https://picsum.photos/seed/texture/600/400"
+      alt="돌이나 콘크리트의 거친 질감 텍스처"
+      width="600"
+    >
+    <figcaption>이미지 8: 자연 텍스처 (너비 600px, 높이 자동)</figcaption>
+  </figure>
+
+  <p><a href="#">맨 위로 이동</a></p>
+
+  <hr>
+
+  <!-- ====== 연락처 섹션 ====== -->
+  <h2 id="contact">연락처</h2>
+
+  <p>작품에 관심이 있으시거나 협업을 원하신다면 아래로 연락 주세요:</p>
+
+  <ul>
+    <li>
+      이메일:
+      <a href="mailto:hong@example.com?subject=포트폴리오 문의">
+        hong@example.com
+      </a>
+      <!-- mailto:이메일?subject=제목 형식으로 이메일 제목을 미리 지정할 수 있음 -->
+    </li>
+    <li>
+      GitHub:
+      <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+        github.com/honggildong
+      </a>
+    </li>
+    <li>
+      전화:
+      <a href="tel:010-1234-5678">010-1234-5678</a>
+    </li>
+  </ul>
+
+  <!-- 현재 페이지에서 다른 HTML 파일로 이동하는 상대경로 링크 예시 -->
+  <p>
+    <a href="../예제/gallery.html">갤러리 홈으로</a> |
+    <a href="../../강의01_HTML_기초/예제/index.html">강의01 예제 보기</a>
+  </p>
+
+  <p><a href="#">맨 위로 이동</a></p>
+
+</body>
+</html>

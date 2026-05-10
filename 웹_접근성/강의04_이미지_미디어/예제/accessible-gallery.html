@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>접근성 이미지 갤러리</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Noto Sans KR', sans-serif; padding: 40px; background: #f8f8f8; }
+
+        h1 { margin-bottom: 8px; color: #1a1a2e; }
+        .page-desc { color: #555; margin-bottom: 32px; }
+
+        /* ── 포커스 스타일 ── */
+        :focus-visible {
+            outline: 3px solid #0066cc;
+            outline-offset: 3px;
+            border-radius: 3px;
+        }
+
+        /* ── 갤러리 그리드 ── */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* ── 갤러리 아이템
+           button으로 만들어 키보드로 접근 가능하게 함 ── */
+        .gallery-item {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .gallery-item:hover,
+        .gallery-item:focus-visible {
+            border-color: #0066cc;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.2);
+        }
+
+        /* ── 이미지 컨테이너 (실제 이미지 대신 색상 박스로 시뮬레이션) ── */
+        .img-container {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .gallery-caption {
+            padding: 12px 16px;
+        }
+        .gallery-caption strong { display: block; color: #1a1a2e; margin-bottom: 4px; }
+        .gallery-caption span { font-size: 0.85rem; color: #666; }
+
+        /* ── 라이트박스 오버레이 ── */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .lightbox[hidden] { display: none; }
+
+        /* ── 라이트박스 이미지 영역 ── */
+        .lightbox-img {
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        /* ── 라이트박스 설명 ── */
+        .lightbox-info {
+            text-align: center;
+            color: white;
+            max-width: 500px;
+        }
+        .lightbox-info h2 { margin-bottom: 8px; }
+        .lightbox-info p { color: #ccc; font-size: 0.95rem; line-height: 1.6; }
+
+        /* ── 닫기 버튼 ── */
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+        /* ── 이전/다음 버튼 ── */
+        .lightbox-nav {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .lightbox-nav button {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .lightbox-nav button:hover { background: rgba(255,255,255,0.2); }
+        .lightbox-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ── 현재 위치 표시 (스크린리더용) ── */
+        .sr-only {
+            position: absolute; width: 1px; height: 1px;
+            padding: 0; margin: -1px; overflow: hidden;
+            clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+        }
+
+        /* ── prefers-reduced-motion: 애니메이션 제거 ── */
+        @media (prefers-reduced-motion: reduce) {
+            .gallery-item { transition: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>자연 사진 갤러리</h1>
+    <p class="page-desc">
+        Tab 키로 사진을 탐색하고 Enter 또는 Space로 크게 볼 수 있습니다.
+    </p>
+
+    <!-- 갤러리 컨테이너
+         role="list": grid 레이아웃이지만 목록임을 명시 -->
+    <ul class="gallery" role="list" aria-label="자연 사진 갤러리">
+
+        <!-- ── 갤러리 아이템
+             button 태그로 키보드/스크린리더 지원
+             aria-label: 클릭 시 동작과 사진 설명을 함께 전달 ── -->
+        <li>
+            <button
+                class="gallery-item"
+                onclick="openLightbox(0)"
+                aria-label="산 정상의 일출 사진 크게 보기"
+            >
+                <!-- 실제 이미지: alt에 사진의 핵심 내용 설명 -->
+                <!-- 여기서는 이미지 대신 이모지로 시뮬레이션 -->
+                <div class="img-container" style="background:#fff3e0;" aria-hidden="true">🌄</div>
+                <div class="gallery-caption">
+                    <strong>산 정상의 일출</strong>
+                    <span>2024년 3월, 한라산</span>
+                </div>
+            </button>
+        </li>
+
+        <li>
+            <button
+                class="gallery-item"
+                onclick="openLightbox(1)"
+                aria-label="에메랄드빛 바다 사진 크게 보기"
+            >
+                <div class="img-container" style="background:#e0f7fa;" aria-hidden="true">🌊</div>
+                <div class="gallery-caption">
+                    <strong>에메랄드빛 바다</strong>
+                    <span>2024년 7월, 제주 협재해변</span>
+                </div>
+            </button>
+        </li>
+
+        <li>
+            <button
+                class="gallery-item"
+                onclick="openLightbox(2)"
+                aria-label="단풍으로 물든 숲 사진 크게 보기"
+            >
+                <div class="img-container" style="background:#fce4ec;" aria-hidden="true">🍁</div>
+                <div class="gallery-caption">
+                    <strong>단풍으로 물든 숲</strong>
+                    <span>2024년 10월, 내장산</span>
+                </div>
+            </button>
+        </li>
+
+        <li>
+            <button
+                class="gallery-item"
+                onclick="openLightbox(3)"
+                aria-label="설원의 침묵 사진 크게 보기"
+            >
+                <div class="img-container" style="background:#e8eaf6;" aria-hidden="true">❄️</div>
+                <div class="gallery-caption">
+                    <strong>설원의 침묵</strong>
+                    <span>2024년 1월, 대관령</span>
+                </div>
+            </button>
+        </li>
+    </ul>
+
+    <!-- ── 라이트박스 모달
+         role="dialog": 다이얼로그 역할
+         aria-modal="true": 모달 밖을 스크린리더가 무시
+         aria-labelledby: 제목과 연결 ── -->
+    <div
+        class="lightbox"
+        id="lightbox"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lightbox-title"
+        hidden
+    >
+        <!-- 닫기 버튼: 라이트박스 안의 첫 번째 포커스 요소 -->
+        <button
+            class="lightbox-close"
+            id="lightbox-close"
+            aria-label="갤러리로 돌아가기"
+            onclick="closeLightbox()"
+        >
+            ✕
+        </button>
+
+        <!-- 이미지 영역 -->
+        <div class="lightbox-img" id="lightbox-img" aria-hidden="true"></div>
+
+        <!-- 이미지 정보
+             스크린리더는 aria-labelledby로 제목을 먼저 읽고,
+             그 다음 설명을 읽음 -->
+        <div class="lightbox-info">
+            <h2 id="lightbox-title"></h2>
+            <p id="lightbox-desc"></p>
+        </div>
+
+        <!-- 이전/다음 내비게이션 -->
+        <nav class="lightbox-nav" aria-label="사진 이전/다음">
+            <button id="prev-btn" onclick="navigate(-1)" aria-label="이전 사진">
+                ← 이전
+            </button>
+            <!-- 현재 몇 번째 사진인지 스크린리더에 전달 -->
+            <span id="nav-status" aria-live="polite" class="sr-only"></span>
+            <button id="next-btn" onclick="navigate(1)" aria-label="다음 사진">
+                다음 →
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // ── 갤러리 데이터
+        const photos = [
+            {
+                emoji: '🌄',
+                bg: '#fff3e0',
+                title: '산 정상의 일출',
+                desc: '2024년 3월, 한라산 정상에서 촬영. 주황빛 하늘과 구름 위로 떠오르는 태양. 해발 1,947m에서 바라본 장엄한 일출 풍경.',
+            },
+            {
+                emoji: '🌊',
+                bg: '#e0f7fa',
+                title: '에메랄드빛 바다',
+                desc: '2024년 7월, 제주 협재해변. 맑고 투명한 에메랄드색 바다와 새하얀 모래사장. 수평선 너머로 비양도가 보임.',
+            },
+            {
+                emoji: '🍁',
+                bg: '#fce4ec',
+                title: '단풍으로 물든 숲',
+                desc: '2024년 10월, 내장산. 빨강, 주황, 노랑으로 물든 단풍나무 군락. 하늘에서 내려다본 알록달록한 가을 숲.',
+            },
+            {
+                emoji: '❄️',
+                bg: '#e8eaf6',
+                title: '설원의 침묵',
+                desc: '2024년 1월, 강원도 대관령. 새벽에 내린 첫눈으로 뒤덮인 목장. 고요하고 새하얀 설경 속에 홀로 선 나무.',
+            },
+        ];
+
+        let currentIndex = 0;
+        let triggerElement = null;
+
+        // ── 포커스 가능한 요소 선택자
+        const FOCUSABLE = 'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
+
+        function openLightbox(index) {
+            triggerElement = document.activeElement; // 트리거 버튼 저장
+            currentIndex = index;
+            updateLightbox();
+
+            const lightbox = document.getElementById('lightbox');
+            lightbox.removeAttribute('hidden');
+
+            // 갤러리 영역을 스크린리더에서 숨김
+            document.querySelector('.gallery').setAttribute('aria-hidden', 'true');
+
+            // 첫 번째 요소(닫기 버튼)로 포커스 이동
+            setTimeout(() => {
+                document.getElementById('lightbox-close').focus();
+            }, 50);
+
+            // 키보드 이벤트 등록
+            document.addEventListener('keydown', handleLightboxKey);
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.setAttribute('hidden', '');
+
+            // 갤러리 접근성 복원
+            document.querySelector('.gallery').removeAttribute('aria-hidden');
+
+            // 키보드 이벤트 제거
+            document.removeEventListener('keydown', handleLightboxKey);
+
+            // 트리거 버튼으로 포커스 복귀
+            if (triggerElement) {
+                triggerElement.focus();
+                triggerElement = null;
+            }
+        }
+
+        function updateLightbox() {
+            const photo = photos[currentIndex];
+
+            // 이미지 업데이트
+            const imgEl = document.getElementById('lightbox-img');
+            imgEl.style.background = photo.bg;
+            imgEl.textContent = photo.emoji;
+
+            // 제목/설명 업데이트
+            document.getElementById('lightbox-title').textContent = photo.title;
+            document.getElementById('lightbox-desc').textContent = photo.desc;
+
+            // 현재 위치 안내 (aria-live로 스크린리더에 전달)
+            document.getElementById('nav-status').textContent =
+                `${currentIndex + 1} / ${photos.length}번째 사진`;
+
+            // 이전/다음 버튼 활성화/비활성화
+            document.getElementById('prev-btn').disabled = currentIndex === 0;
+            document.getElementById('next-btn').disabled = currentIndex === photos.length - 1;
+        }
+
+        function navigate(direction) {
+            const newIndex = currentIndex + direction;
+            if (newIndex < 0 || newIndex >= photos.length) return;
+            currentIndex = newIndex;
+            updateLightbox();
+        }
+
+        function handleLightboxKey(e) {
+            const lightbox = document.getElementById('lightbox');
+            const focusables = Array.from(lightbox.querySelectorAll(FOCUSABLE));
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+
+            switch (e.key) {
+                case 'Escape':
+                    closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    navigate(-1); // 왼쪽 화살표: 이전 사진
+                    break;
+                case 'ArrowRight':
+                    navigate(1);  // 오른쪽 화살표: 다음 사진
+                    break;
+                case 'Tab':
+                    // Focus Trap: 라이트박스 안에서만 순환
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

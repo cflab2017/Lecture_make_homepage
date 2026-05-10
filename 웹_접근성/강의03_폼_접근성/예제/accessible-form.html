@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>접근성 회원가입 폼</title>
+    <style>
+        /* ── 기본 스타일 ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            padding: 40px 16px;
+            min-height: 100vh;
+        }
+
+        .form-wrapper {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 480px;
+            height: fit-content;
+        }
+
+        h1 { font-size: 1.6rem; margin-bottom: 8px; color: #1a1a2e; }
+        .form-subtitle { color: #666; margin-bottom: 32px; }
+
+        /* ── 포커스 스타일: outline 절대 제거 금지! ── */
+        :focus-visible {
+            outline: 3px solid #0066cc;
+            outline-offset: 2px;
+            border-radius: 3px;
+        }
+
+        /* ── 폼 필드 그룹 ── */
+        .field-group { margin-bottom: 24px; }
+
+        /* ── 레이블 스타일
+           색상 대비: #333 / 흰 배경 = 12:1 ── */
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        /* 필수 필드 표시: 색상만으로 표시하지 않고 텍스트도 함께 */
+        .required-mark {
+            color: #cc0000;
+            margin-left: 4px;
+            aria-hidden: true; /* 스크린리더에서 숨김 (aria-required로 이미 전달) */
+        }
+
+        /* ── 입력 필드
+           테두리 색상 대비: #767676 / 흰 배경 = 4.5:1 (기준 충족) ── */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #767676; /* 대비율 4.5:1 */
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            background: white;
+            transition: border-color 0.2s;
+        }
+        input:hover { border-color: #444; }
+        input:focus { border-color: #0066cc; }
+
+        /* 에러 상태: 테두리 빨간색 + 배경 연분홍 */
+        input[aria-invalid="true"] {
+            border-color: #cc0000;
+            background: #fff8f8;
+        }
+
+        /* ── 힌트 텍스트 (입력 필드 아래 안내문) ── */
+        .hint-text {
+            font-size: 0.85rem;
+            color: #666;  /* 대비율 5.7:1 */
+            margin-top: 6px;
+        }
+
+        /* ── 에러 메시지 ── */
+        .error-msg {
+            font-size: 0.875rem;
+            color: #cc0000;  /* 대비율 5.9:1 */
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .error-msg[hidden] { display: none; }
+
+        /* ── 비밀번호 강도 표시기 ── */
+        .pw-strength { margin-top: 8px; }
+        .pw-strength-bar {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+        .pw-strength-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s, background 0.3s;
+            width: 0%;
+        }
+        .pw-strength-text { font-size: 0.8rem; color: #666; }
+
+        /* ── 체크박스 ── */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+            flex-shrink: 0;
+            accent-color: #0066cc;
+        }
+        .checkbox-group label {
+            font-weight: normal;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        /* ── 제출 버튼 ── */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover { background: #0052a3; }
+        .submit-btn:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        /* ── 성공 메시지 ── */
+        .success-banner {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            border-radius: 6px;
+            padding: 16px;
+            color: #1b5e20;
+            font-weight: 600;
+        }
+        .success-banner[hidden] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="form-wrapper">
+        <h1>회원가입</h1>
+        <p class="form-subtitle">
+            <span aria-hidden="true">*</span>
+            표시는 필수 입력 항목입니다.
+        </p>
+
+        <!-- ── 성공 메시지 (제출 후 표시)
+             role="alert": 내용이 바뀌면 스크린리더가 즉시 읽음 ── -->
+        <div id="success-msg" role="alert" class="success-banner" hidden>
+            회원가입이 완료되었습니다! 환영합니다.
+        </div>
+
+        <!-- ── 폼
+             novalidate: 브라우저 기본 유효성 검사 비활성화 (우리가 직접 처리)
+             aria-label: 폼의 목적을 스크린리더에 알림 ── -->
+        <form id="signup-form" novalidate aria-label="회원가입 폼">
+
+            <!-- ── 이름 필드 ── -->
+            <div class="field-group">
+                <label for="name">
+                    이름
+                    <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                    aria-required="true"
+                    aria-describedby="name-error"
+                    aria-invalid="false"
+                >
+                <!-- 에러 메시지: hidden 속성으로 숨겼다가 에러 시 표시
+                     role="alert": 표시되는 순간 스크린리더가 읽음 -->
+                <p id="name-error" class="error-msg" role="alert" hidden>
+                    <span aria-hidden="true">⚠</span>
+                    이름을 입력해주세요.
+                </p>
+            </div>
+
+            <!-- ── 이메일 필드 ── -->
+            <div class="field-group">
+                <label for="email">
+                    이메일
+                    <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    autocomplete="email"
+                    required
+                    aria-required="true"
+                    aria-describedby="email-hint email-error"
+                    aria-invalid="false"
+                    placeholder="user@example.com"
+                >
+                <!-- aria-describedby에 hint와 error를 모두 연결
+                     스크린리더는 두 요소를 모두 읽음 -->
+                <p id="email-hint" class="hint-text">
+                    예: user@example.com
+                </p>
+                <p id="email-error" class="error-msg" role="alert" hidden>
+                    <span aria-hidden="true">⚠</span>
+                    올바른 이메일 형식을 입력해주세요.
+                </p>
+            </div>
+
+            <!-- ── 비밀번호 필드 ── -->
+            <div class="field-group">
+                <label for="password">
+                    비밀번호
+                    <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="new-password"
+                    required
+                    aria-required="true"
+                    aria-describedby="pw-hint pw-strength-desc pw-error"
+                    aria-invalid="false"
+                    oninput="checkPasswordStrength(this.value)"
+                >
+                <p id="pw-hint" class="hint-text">
+                    8자 이상, 대소문자 + 숫자 + 특수문자 포함
+                </p>
+                <!-- 비밀번호 강도: aria-live로 변경 시 자동 알림 -->
+                <div class="pw-strength" aria-live="polite">
+                    <div class="pw-strength-bar">
+                        <div class="pw-strength-fill" id="pw-strength-fill"></div>
+                    </div>
+                    <!-- 스크린리더를 위한 텍스트 표현 -->
+                    <p class="pw-strength-text" id="pw-strength-desc"></p>
+                </div>
+                <p id="pw-error" class="error-msg" role="alert" hidden>
+                    <span aria-hidden="true">⚠</span>
+                    비밀번호는 8자 이상이어야 합니다.
+                </p>
+            </div>
+
+            <!-- ── 약관 동의 체크박스 ── -->
+            <div class="checkbox-group">
+                <input
+                    type="checkbox"
+                    id="agree-terms"
+                    name="agree-terms"
+                    required
+                    aria-required="true"
+                    aria-describedby="terms-error"
+                >
+                <label for="agree-terms">
+                    <a href="/terms" target="_blank">이용약관</a> 및
+                    <a href="/privacy" target="_blank">개인정보 처리방침</a>에 동의합니다
+                    <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+            </div>
+            <p id="terms-error" class="error-msg" role="alert" hidden>
+                <span aria-hidden="true">⚠</span>
+                이용약관에 동의해주세요.
+            </p>
+
+            <button type="submit" class="submit-btn">가입하기</button>
+        </form>
+    </div>
+
+    <script>
+        // ── 비밀번호 강도 확인
+        function checkPasswordStrength(value) {
+            const fill = document.getElementById('pw-strength-fill');
+            const desc = document.getElementById('pw-strength-desc');
+
+            let strength = 0;
+            if (value.length >= 8) strength++;
+            if (/[A-Z]/.test(value) && /[a-z]/.test(value)) strength++;
+            if (/[0-9]/.test(value)) strength++;
+            if (/[^A-Za-z0-9]/.test(value)) strength++;
+
+            const levels = [
+                { label: '', color: '#eee', width: '0%' },
+                { label: '매우 약함', color: '#cc0000', width: '25%' },
+                { label: '약함',     color: '#ff8800', width: '50%' },
+                { label: '보통',     color: '#ffcc00', width: '75%' },
+                { label: '강함',     color: '#2e7d32', width: '100%' },
+            ];
+
+            const level = value.length === 0 ? 0 : Math.max(1, strength);
+            fill.style.width = levels[level].width;
+            fill.style.background = levels[level].color;
+            // 스크린리더는 aria-live="polite"로 이 텍스트 변경을 읽음
+            desc.textContent = value.length > 0 ? `비밀번호 강도: ${levels[level].label}` : '';
+        }
+
+        // ── 에러 표시/해제 헬퍼
+        function showError(inputId, errorId, message) {
+            const input = document.getElementById(inputId);
+            const errorEl = document.getElementById(errorId);
+            input.setAttribute('aria-invalid', 'true');
+            errorEl.textContent = (message.includes('⚠') ? message : `⚠ ${message}`);
+            errorEl.removeAttribute('hidden');
+        }
+
+        function clearError(inputId, errorId) {
+            const input = document.getElementById(inputId);
+            const errorEl = document.getElementById(errorId);
+            input.setAttribute('aria-invalid', 'false');
+            errorEl.setAttribute('hidden', '');
+        }
+
+        // ── 폼 제출 처리
+        document.getElementById('signup-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            let hasError = false;
+
+            const name  = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const pw    = document.getElementById('password').value;
+            const terms = document.getElementById('agree-terms').checked;
+
+            // 이름 검증
+            if (!name) {
+                showError('name', 'name-error', '이름을 입력해주세요.');
+                hasError = true;
+            } else {
+                clearError('name', 'name-error');
+            }
+
+            // 이메일 검증
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                showError('email', 'email-error', '올바른 이메일 형식을 입력해주세요.');
+                hasError = true;
+            } else {
+                clearError('email', 'email-error');
+            }
+
+            // 비밀번호 검증
+            if (pw.length < 8) {
+                showError('password', 'pw-error', '비밀번호는 8자 이상이어야 합니다.');
+                hasError = true;
+            } else {
+                clearError('password', 'pw-error');
+            }
+
+            // 약관 동의 검증
+            if (!terms) {
+                const termsError = document.getElementById('terms-error');
+                termsError.removeAttribute('hidden');
+                hasError = true;
+            } else {
+                document.getElementById('terms-error').setAttribute('hidden', '');
+            }
+
+            // 에러가 있으면 첫 번째 에러 필드로 포커스 이동
+            if (hasError) {
+                const firstInvalid = document.querySelector('[aria-invalid="true"]');
+                if (firstInvalid) firstInvalid.focus();
+                return;
+            }
+
+            // 성공 처리
+            this.setAttribute('hidden', '');
+            const successMsg = document.getElementById('success-msg');
+            successMsg.removeAttribute('hidden');
+            successMsg.focus(); // 포커스 이동으로 스크린리더가 즉시 읽음
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>버튼 스타일 5종</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>버튼 스타일 쇼케이스</h1>
+    <p>background, border, border-radius, box-shadow, transition 활용</p>
+  </header>
+
+  <main class="container">
+
+    <!-- 버튼 섹션 1: 기본 스타일 -->
+    <section class="card">
+      <h2>1. 기본 버튼 (Solid)</h2>
+      <p class="desc">배경색과 글자색으로 구성된 기본 버튼입니다.</p>
+      <div class="button-group">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-success">Success</button>
+        <button class="btn btn-danger">Danger</button>
+        <button class="btn btn-warning">Warning</button>
+      </div>
+    </section>
+
+    <!-- 버튼 섹션 2: 아웃라인 -->
+    <section class="card">
+      <h2>2. 아웃라인 버튼 (Outline)</h2>
+      <p class="desc">배경 없이 테두리(border)만 있는 버튼입니다. 호버 시 배경이 채워집니다.</p>
+      <div class="button-group">
+        <button class="btn btn-outline-primary">Primary</button>
+        <button class="btn btn-outline-success">Success</button>
+        <button class="btn btn-outline-danger">Danger</button>
+      </div>
+    </section>
+
+    <!-- 버튼 섹션 3: 둥근 버튼 -->
+    <section class="card">
+      <h2>3. 둥근 버튼 (Pill)</h2>
+      <p class="desc">border-radius를 크게 설정한 Pill 모양 버튼입니다.</p>
+      <div class="button-group">
+        <button class="btn btn-pill btn-primary">Pill Primary</button>
+        <button class="btn btn-pill btn-success">Pill Success</button>
+        <button class="btn btn-pill btn-outline-primary">Pill Outline</button>
+      </div>
+    </section>
+
+    <!-- 버튼 섹션 4: 그림자 버튼 -->
+    <section class="card">
+      <h2>4. 그림자 버튼 (Shadow)</h2>
+      <p class="desc">box-shadow로 입체감을 준 버튼입니다. 호버 시 그림자가 변합니다.</p>
+      <div class="button-group">
+        <button class="btn btn-shadow-blue">Shadow Blue</button>
+        <button class="btn btn-shadow-green">Shadow Green</button>
+        <button class="btn btn-shadow-purple">Shadow Purple</button>
+      </div>
+    </section>
+
+    <!-- 버튼 섹션 5: 호버 효과 -->
+    <section class="card">
+      <h2>5. 다양한 호버 효과</h2>
+      <p class="desc">transition과 transform을 활용한 인터랙티브 버튼입니다.</p>
+      <div class="button-group">
+        <button class="btn btn-hover-rise">위로 올라오기</button>
+        <button class="btn btn-hover-fill">색상 채우기</button>
+        <button class="btn btn-hover-glow">빛나기</button>
+        <button class="btn btn-hover-scale">확대</button>
+      </div>
+    </section>
+
+    <!-- 배경 이미지 섹션 -->
+    <section class="card">
+      <h2>6. 배경 속성 데모</h2>
+      <div class="bg-demos">
+        <div class="bg-demo bg-gradient-1">
+          <span>linear-gradient</span>
+        </div>
+        <div class="bg-demo bg-gradient-2">
+          <span>135deg 그라데이션</span>
+        </div>
+        <div class="bg-demo bg-gradient-3">
+          <span>radial-gradient</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- border-radius 데모 -->
+    <section class="card">
+      <h2>7. border-radius 다양한 활용</h2>
+      <div class="radius-demos">
+        <div class="radius-demo radius-0">0px</div>
+        <div class="radius-demo radius-8">8px</div>
+        <div class="radius-demo radius-16">16px</div>
+        <div class="radius-demo radius-50">50%<br>(원)</div>
+        <div class="radius-demo radius-mixed">혼합</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <p>버튼 스타일 5종 예제 &copy; 2025</p>
+  </footer>
+
+</body>
+</html>

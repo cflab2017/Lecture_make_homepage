@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>강의 05 — 객체 예제 (학생 관리 테이블)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f5f5f5;
+    }
+    h1 { color: #2c3e50; border-bottom: 3px solid #9b59b6; padding-bottom: 10px; }
+    /* 테이블 스타일 */
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr { background: #9b59b6; color: white; }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ecf0f1;
+    }
+    tbody tr { cursor: pointer; transition: background 0.2s; }
+    tbody tr:hover { background: #f5eef8; }
+    /* 학점 배지 */
+    .grade-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .grade-A { background: #d5f5e3; color: #27ae60; }
+    .grade-B { background: #d6eaf8; color: #2980b9; }
+    .grade-C { background: #fdebd0; color: #e67e22; }
+    .grade-D { background: #fdedec; color: #e74c3c; }
+    .grade-F { background: #ecf0f1; color: #7f8c8d; }
+    /* 상세 정보 패널 */
+    .detail-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: none; /* 처음에는 숨김 */
+    }
+    .detail-panel h2 { color: #9b59b6; margin-top: 0; }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .detail-item {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .detail-label { font-size: 12px; color: #7f8c8d; margin-bottom: 4px; }
+    .detail-value { font-size: 16px; font-weight: bold; color: #2c3e50; }
+    /* 통계 영역 */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      flex: 1;
+      min-width: 120px;
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .stat-value { font-size: 26px; font-weight: bold; color: #9b59b6; }
+    .stat-label { font-size: 12px; color: #7f8c8d; }
+    /* 정렬 버튼 */
+    .sort-btn {
+      padding: 5px 12px;
+      background: #f0e6f6;
+      color: #9b59b6;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-left: 5px;
+    }
+    .sort-btn:hover { background: #e8d5f5; }
+    .sort-btn.active { background: #9b59b6; color: white; }
+  </style>
+</head>
+<body>
+
+<h1>강의 05 — 객체 예제: 학생 관리</h1>
+
+<!-- 통계 카드 -->
+<div class="stats-row" id="statsRow"></div>
+
+<!-- 정렬 버튼 -->
+<div style="margin-bottom:10px">
+  <span style="font-size:14px;color:#7f8c8d;">정렬: </span>
+  <button class="sort-btn active" id="sortName" onclick="sortBy('name')">이름순</button>
+  <button class="sort-btn" id="sortScore" onclick="sortBy('score')">점수순</button>
+  <button class="sort-btn" id="sortGrade" onclick="sortBy('grade')">학점순</button>
+</div>
+
+<!-- 학생 테이블 -->
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>이름</th>
+        <th>학과</th>
+        <th>점수</th>
+        <th>학점</th>
+        <th>학년</th>
+      </tr>
+    </thead>
+    <tbody id="studentTable"></tbody>
+  </table>
+</div>
+
+<!-- 상세 정보 패널 (이름 클릭 시 표시) -->
+<div class="detail-panel" id="detailPanel">
+  <h2 id="detailName"></h2>
+  <div class="detail-grid" id="detailGrid"></div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  // 학생 객체 배열 (데이터)
+  // 각 학생은 여러 속성을 가진 객체
+  // ─────────────────────────────────────────
+  const students = [
+    {
+      id: 1,
+      name: "김철수",
+      department: "컴퓨터공학과",
+      year: 3,
+      score: 95,
+      grade: "A+",
+      email: "chulsoo@university.ac.kr",
+      phone: "010-1234-5678",
+      hobby: "코딩, 독서"
+    },
+    {
+      id: 2,
+      name: "이영희",
+      department: "수학과",
+      year: 2,
+      score: 78,
+      grade: "C+",
+      email: "younghee@university.ac.kr",
+      phone: "010-2345-6789",
+      hobby: "음악, 운동"
+    },
+    {
+      id: 3,
+      name: "박민준",
+      department: "물리학과",
+      year: 4,
+      score: 88,
+      grade: "B+",
+      email: "minjun@university.ac.kr",
+      phone: "010-3456-7890",
+      hobby: "게임, 영화"
+    },
+    {
+      id: 4,
+      name: "최지아",
+      department: "컴퓨터공학과",
+      year: 1,
+      score: 92,
+      grade: "A",
+      email: "jia@university.ac.kr",
+      phone: "010-4567-8901",
+      hobby: "그림, 여행"
+    },
+    {
+      id: 5,
+      name: "정도현",
+      department: "경영학과",
+      year: 3,
+      score: 65,
+      grade: "D+",
+      email: "dohyun@university.ac.kr",
+      phone: "010-5678-9012",
+      hobby: "축구, 요리"
+    },
+  ];
+
+  // 현재 정렬 기준 상태
+  let currentSort = 'name';
+
+  // ─────────────────────────────────────────
+  // 통계 계산 및 렌더링
+  // ─────────────────────────────────────────
+
+  /**
+   * 학생 배열에서 통계를 계산하고 카드로 표시하는 함수
+   */
+  function renderStats() {
+    const statsRow = document.getElementById('statsRow');
+
+    // 평균 점수 계산 (reduce로 합계 → 나누기)
+    const avgScore = students.reduce((sum, s) => sum + s.score, 0) / students.length;
+
+    // 최고 점수 학생 찾기 (reduce 활용)
+    const topStudent = students.reduce((top, s) => s.score > top.score ? s : top);
+
+    // 학과별 학생 수 계산 (객체를 카운터로 활용)
+    const deptCount = {};
+    students.forEach(s => {
+      deptCount[s.department] = (deptCount[s.department] || 0) + 1;
+    });
+
+    // 통계 카드 데이터
+    const stats = [
+      { value: students.length, label: "전체 학생" },
+      { value: avgScore.toFixed(1), label: "평균 점수" },
+      { value: topStudent.name, label: "최고 점수" },
+      { value: Object.keys(deptCount).length, label: "학과 수" },
+    ];
+
+    // map으로 카드 HTML 생성
+    statsRow.innerHTML = stats.map(s => `
+      <div class="stat-card">
+        <div class="stat-value">${s.value}</div>
+        <div class="stat-label">${s.label}</div>
+      </div>
+    `).join('');
+  }
+
+  // ─────────────────────────────────────────
+  // 테이블 렌더링
+  // ─────────────────────────────────────────
+
+  /**
+   * students 배열을 읽어 테이블 행으로 렌더링하는 함수
+   * 구조분해할당을 활용하여 속성 추출
+   */
+  function renderTable() {
+    const tbody = document.getElementById('studentTable');
+
+    // 현재 정렬 기준으로 복사본 정렬 (전개 연산자로 원본 보호)
+    const sorted = [...students].sort((a, b) => {
+      if (currentSort === 'name') return a.name.localeCompare(b.name);
+      if (currentSort === 'score') return b.score - a.score; // 내림차순
+      if (currentSort === 'grade') return a.grade.localeCompare(b.grade);
+      return 0;
+    });
+
+    // map으로 각 학생 객체를 <tr> 행으로 변환
+    tbody.innerHTML = sorted.map(student => {
+      // 구조분해할당으로 필요한 속성만 추출
+      const { id, name, department, year, score, grade } = student;
+
+      // 학점에 따른 배지 클래스 결정
+      const badgeClass = `grade-${grade[0]}`; // 첫 글자로 클래스 결정 (A+→A, B→B)
+
+      return `
+        <tr onclick="showDetail(${id})">
+          <td>${id}</td>
+          <td><strong>${name}</strong></td>
+          <td>${department}</td>
+          <td>${score}점</td>
+          <td><span class="grade-badge ${badgeClass}">${grade}</span></td>
+          <td>${year}학년</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ─────────────────────────────────────────
+  // 상세 정보 패널 표시
+  // ─────────────────────────────────────────
+
+  /**
+   * 클릭한 학생의 상세 정보를 패널에 표시하는 함수
+   * find로 학생 검색, 구조분해할당 활용
+   * @param {number} id - 조회할 학생의 ID
+   */
+  function showDetail(id) {
+    // find로 해당 ID의 학생 객체 검색
+    const student = students.find(s => s.id === id);
+    if (!student) return;
+
+    // 구조분해할당으로 모든 속성 추출
+    const { name, department, year, score, grade, email, phone, hobby } = student;
+
+    const panel = document.getElementById('detailPanel');
+    const detailName = document.getElementById('detailName');
+    const detailGrid = document.getElementById('detailGrid');
+
+    // 상세 정보 카드 데이터 배열
+    const details = [
+      { label: "학과", value: department },
+      { label: "학년", value: `${year}학년` },
+      { label: "점수", value: `${score}점` },
+      { label: "학점", value: grade },
+      { label: "이메일", value: email },
+      { label: "전화번호", value: phone },
+      { label: "취미", value: hobby },
+    ];
+
+    // 상세 패널 표시
+    panel.style.display = 'block';
+    detailName.textContent = `${name} 학생 상세 정보`;
+
+    // map으로 각 정보를 카드로 변환
+    detailGrid.innerHTML = details.map(d => `
+      <div class="detail-item">
+        <div class="detail-label">${d.label}</div>
+        <div class="detail-value">${d.value}</div>
+      </div>
+    `).join('');
+
+    // 부드럽게 스크롤하여 패널로 이동
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ─────────────────────────────────────────
+  // 정렬 기능
+  // ─────────────────────────────────────────
+
+  /**
+   * 정렬 기준을 변경하고 테이블을 다시 렌더링하는 함수
+   * @param {string} key - 정렬 기준 ('name'|'score'|'grade')
+   */
+  function sortBy(key) {
+    currentSort = key;
+
+    // 모든 정렬 버튼에서 active 클래스 제거
+    document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+    // 클릭된 버튼에 active 클래스 추가
+    document.getElementById(`sort${key.charAt(0).toUpperCase() + key.slice(1)}`).classList.add('active');
+
+    renderTable(); // 테이블 다시 그리기
+  }
+
+  // ─────────────────────────────────────────
+  // 초기 렌더링
+  // ─────────────────────────────────────────
+  renderStats();
+  renderTable();
+</script>
+
+</body>
+</html>

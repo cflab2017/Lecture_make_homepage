@@ -1,0 +1,72 @@
+// ============================================
+// 과제05 정답: Comment 모델 추가된 스키마
+// ============================================
+// 마이그레이션 실행:
+//   npx prisma migrate dev --name add-comment
+// ============================================
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────
+// User 모델
+// 한 유저는 여러 포스트와 여러 댓글을 가짐 (1:N 두 개)
+// ─────────────────────────────────────────
+model User {
+    id        Int       @id @default(autoincrement())
+    email     String    @unique
+    name      String
+    bio       String?
+    posts     Post[]    // 유저 → 포스트 (1:N)
+    comments  Comment[] // 유저 → 댓글 (1:N) ← 추가됨
+    createdAt DateTime  @default(now())
+
+    @@map("users")
+}
+
+// ─────────────────────────────────────────
+// Post 모델
+// 한 포스트는 여러 댓글을 가짐 (1:N)
+// ─────────────────────────────────────────
+model Post {
+    id        Int       @id @default(autoincrement())
+    title     String
+    content   String
+    published Boolean   @default(false)
+    viewCount Int       @default(0)
+    author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    authorId  Int
+    comments  Comment[] // 포스트 → 댓글 (1:N) ← 추가됨
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    @@map("posts")
+}
+
+// ─────────────────────────────────────────
+// Comment 모델 (새로 추가)
+// 한 댓글은 하나의 포스트 + 하나의 유저에 속함 (N:1 두 개)
+// ─────────────────────────────────────────
+model Comment {
+    id        Int      @id @default(autoincrement())
+    content   String                                   // 댓글 내용
+
+    // 포스트와의 관계 (댓글 → 포스트, N:1)
+    // onDelete: Cascade → 포스트 삭제 시 댓글도 자동 삭제
+    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId    Int
+
+    // 작성자와의 관계 (댓글 → 유저, N:1)
+    author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    authorId  Int
+
+    createdAt DateTime @default(now())
+
+    @@map("comments")
+}

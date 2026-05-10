@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!-- 개선 1: lang 속성 추가 → 스크린리더가 올바른 언어로 읽음 -->
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>접근성 검색 폼 — 개선 버전</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Noto Sans KR', sans-serif; padding: 40px; background: #f5f5f5; }
+
+        h1 { margin-bottom: 24px; color: #1a1a2e; }
+
+        .search-form { display: flex; gap: 8px; margin-bottom: 12px; max-width: 500px; }
+
+        /* 개선 3: 색상 대비 충족
+           input 테두리: #767676 / 흰 배경 = 4.5:1 (기준 충족) */
+        input[type="search"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #767676; /* 대비율 4.5:1 */
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #1a1a1a;
+        }
+
+        /* 개선 4: 포커스 스타일 → outline: none 절대 사용 금지!
+           키보드 사용자가 현재 위치를 알 수 있어야 함 */
+        :focus-visible {
+            outline: 3px solid #0066cc;
+            outline-offset: 2px;
+            border-radius: 3px;
+        }
+
+        /* 개선 5: 버튼 색상 대비
+           버튼 텍스트: 흰색(#fff) / 파란 배경(#0055aa) = 5.7:1 (기준 충족) */
+        button[type="submit"] {
+            padding: 12px 20px;
+            background: #0055aa;  /* 대비율 5.7:1 (기존 blue는 약 3.9:1로 기준 미달) */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        button[type="submit"]:hover { background: #003d8a; }
+
+        /* 개선 6: 에러 메시지 색상 대비
+           #cc0000(빨강) / 흰 배경 = 5.9:1 (기준 충족)
+           기존 red는 대비율이 더 낮을 수 있음 → 명확한 색상 지정 */
+        .error-msg {
+            color: #cc0000;      /* 대비율 5.9:1 */
+            font-size: 0.9rem;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .error-msg[hidden] { display: none; }
+
+        /* 검색 결과 영역 */
+        .results-section { margin-top: 24px; max-width: 500px; }
+        .results-section h2 { font-size: 1.1rem; margin-bottom: 12px; color: #333; }
+        #results { list-style: none; }
+        #results li {
+            padding: 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+        #results li:empty { display: none; }
+    </style>
+</head>
+<body>
+    <h1>상품 검색</h1>
+
+    <!-- 개선 7: role="search" → 스크린리더가 "검색 랜드마크" 라고 알림 -->
+    <form
+        id="search-form"
+        role="search"
+        class="search-form-wrapper"
+        onsubmit="handleSearch(event)"
+        novalidate
+    >
+        <div class="search-form">
+
+            <!-- 개선 1: aria-label로 레이블 제공
+                 placeholder만 있으면 입력 후 레이블을 알 수 없음
+                 aria-describedby로 에러 메시지 연결 -->
+            <input
+                type="search"
+                id="search-input"
+                name="q"
+                aria-label="상품 검색어"
+                aria-describedby="search-error"
+                aria-invalid="false"
+                placeholder="검색어를 입력하세요"
+                autocomplete="off"
+            >
+
+            <!-- 개선 2: 아이콘만 있는 버튼에 aria-label 추가
+                 기존: <button>🔍</button> → 스크린리더가 "돋보기" 또는 "버튼" 이라고 읽음
+                 개선: aria-label="검색" → "검색 버튼" 이라고 명확하게 읽음 -->
+            <button type="submit" aria-label="검색">
+                <span aria-hidden="true">🔍</span> <!-- 아이콘은 aria-hidden으로 숨김 -->
+                검색 <!-- 시각적 텍스트도 함께 표시 (더 명확함) -->
+            </button>
+        </div>
+
+        <!-- 개선 3: 에러 메시지에 role="alert" 추가
+             role="alert": 내용이 바뀌면 스크린리더가 즉시 읽음 (포커스 이동 없이)
+             hidden 속성으로 숨겼다가 에러 시에만 표시 -->
+        <p
+            id="search-error"
+            class="error-msg"
+            role="alert"
+            hidden
+        >
+            <span aria-hidden="true">⚠</span>
+            검색어를 입력해주세요.
+        </p>
+    </form>
+
+    <!-- 검색 결과 영역
+         aria-live="polite": 결과가 업데이트되면 스크린리더가 읽음
+         (polite: 현재 읽고 있는 것을 마친 후 읽음 / assertive: 즉시 끊고 읽음) -->
+    <section class="results-section" aria-live="polite" aria-label="검색 결과">
+        <!-- 검색 결과 수를 스크린리더에 알리는 요소 -->
+        <p id="results-count" class="sr-only"></p>
+        <ul id="results" aria-label="검색 결과 목록"></ul>
+    </section>
+
+    <!-- 시각적으로 숨기는 클래스 (스크린리더는 읽음) -->
+    <style>
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+
+    <script>
+        function handleSearch(e) {
+            e.preventDefault();
+
+            const input = document.getElementById('search-input');
+            const errorEl = document.getElementById('search-error');
+            const results = document.getElementById('results');
+            const resultsCount = document.getElementById('results-count');
+
+            const query = input.value.trim();
+
+            // 에러 처리: 빈 검색어
+            if (!query) {
+                // aria-invalid: 입력값이 유효하지 않음을 스크린리더에 알림
+                input.setAttribute('aria-invalid', 'true');
+                // 에러 메시지 표시 (role="alert"로 자동 알림)
+                errorEl.removeAttribute('hidden');
+                input.focus(); // 포커스를 입력 필드로 이동
+                return;
+            }
+
+            // 에러 해제
+            input.setAttribute('aria-invalid', 'false');
+            errorEl.setAttribute('hidden', '');
+
+            // 검색 결과 표시 (모의 검색)
+            const mockResults = [
+                `"${query}" 노트북`,
+                `"${query}" 관련 마우스`,
+                `"${query}" 키보드 추천`,
+            ];
+
+            // aria-live 영역 업데이트 → 스크린리더가 자동으로 읽음
+            results.innerHTML = mockResults
+                .map(item => `<li>${item}</li>`)
+                .join('');
+
+            // 검색 결과 수를 스크린리더에 알림 (시각적으로는 숨김)
+            resultsCount.textContent = `총 ${mockResults.length}개의 검색 결과가 있습니다.`;
+        }
+    </script>
+</body>
+</html>

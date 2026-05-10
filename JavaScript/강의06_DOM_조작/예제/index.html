@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>강의 06 — DOM 조작 예제 (동적 카드 생성기)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f5f5f5;
+    }
+    h1 { color: #2c3e50; border-bottom: 3px solid #e67e22; padding-bottom: 10px; }
+    /* 컨트롤 영역 */
+    .controls {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 150px;
+    }
+    .field label { font-size: 13px; color: #7f8c8d; font-weight: bold; }
+    .field input, .field select {
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .field input:focus, .field select:focus { border-color: #e67e22; outline: none; }
+    /* 추가 버튼 */
+    .add-btn {
+      padding: 12px 24px;
+      background: #e67e22;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .add-btn:hover { background: #ca6f1e; }
+    /* 카드 그리드 */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    /* 동적 카드 */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeIn 0.3s ease; /* 등장 애니메이션 */
+    }
+    /* 카드 등장 애니메이션 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    /* 카드 색상 테마 */
+    .theme-blue   { border-top: 4px solid #3498db; }
+    .theme-green  { border-top: 4px solid #27ae60; }
+    .theme-red    { border-top: 4px solid #e74c3c; }
+    .theme-purple { border-top: 4px solid #9b59b6; }
+    .theme-orange { border-top: 4px solid #e67e22; }
+    /* 카드 내용 */
+    .card-title { font-size: 17px; font-weight: bold; color: #2c3e50; margin-bottom: 8px; }
+    .card-body { font-size: 14px; color: #7f8c8d; line-height: 1.5; }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px solid #ecf0f1;
+    }
+    .card-id { font-size: 12px; color: #bdc3c7; }
+    /* 카드 내 삭제 버튼 */
+    .card-delete {
+      padding: 5px 12px;
+      background: #fdecea;
+      color: #e74c3c;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .card-delete:hover { background: #fadbd8; }
+    /* 즐겨찾기 토글 버튼 */
+    .card-fav {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card-fav:hover { transform: scale(1.3); }
+    /* 전체 삭제 버튼 */
+    .clear-btn {
+      padding: 10px 20px;
+      background: #ecf0f1;
+      color: #7f8c8d;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+    .clear-btn:hover { background: #dfe6e9; }
+    /* 카운터 */
+    .counter { font-size: 14px; color: #7f8c8d; margin-bottom: 10px; }
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #bbb;
+      padding: 50px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>강의 06 — 동적 카드 생성기</h1>
+
+<!-- 컨트롤 영역 -->
+<div class="controls">
+  <!-- 제목 입력 -->
+  <div class="field">
+    <label for="cardTitle">제목</label>
+    <input type="text" id="cardTitle" placeholder="카드 제목" maxlength="30">
+  </div>
+  <!-- 내용 입력 -->
+  <div class="field">
+    <label for="cardBody">내용</label>
+    <input type="text" id="cardBody" placeholder="카드 내용" maxlength="60">
+  </div>
+  <!-- 테마 선택 -->
+  <div class="field" style="min-width:120px">
+    <label for="cardTheme">테마</label>
+    <select id="cardTheme">
+      <option value="theme-blue">파랑</option>
+      <option value="theme-green">초록</option>
+      <option value="theme-red">빨강</option>
+      <option value="theme-purple">보라</option>
+      <option value="theme-orange">주황</option>
+    </select>
+  </div>
+  <!-- 카드 추가 버튼 -->
+  <button class="add-btn" onclick="addCard()">카드 추가</button>
+</div>
+
+<!-- 카드 카운터 및 전체 삭제 -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+  <div class="counter" id="counter">카드 0개</div>
+  <button class="clear-btn" onclick="clearAllCards()">전체 삭제</button>
+</div>
+
+<!-- 카드 그리드 컨테이너 -->
+<div class="card-grid" id="cardGrid">
+  <div class="empty-state" id="emptyState">🃏 위에서 카드를 추가해보세요!</div>
+</div>
+
+<script>
+  // 카드 ID 카운터 (dataset에 저장)
+  let cardCount = 0;
+
+  /**
+   * 새 카드를 동적으로 생성하여 그리드에 추가하는 함수
+   * createElement, appendChild, classList, dataset 활용
+   */
+  function addCard() {
+    // 입력값 읽기
+    const titleInput = document.getElementById('cardTitle');
+    const bodyInput  = document.getElementById('cardBody');
+    const themeSelect = document.getElementById('cardTheme');
+
+    const title = titleInput.value.trim();
+    const body  = bodyInput.value.trim();
+    const theme = themeSelect.value;
+
+    // 제목이 없으면 기본값 사용
+    const cardTitle = title || '제목 없음';
+    const cardBody  = body  || '내용을 입력해주세요.';
+
+    // 고유 ID 증가
+    cardCount++;
+
+    // ── createElement로 카드 요소 생성 ──────
+
+    // 카드 컨테이너 div 생성
+    const card = document.createElement('div');
+
+    // classList.add로 클래스 추가
+    card.classList.add('card', theme);
+
+    // dataset으로 카드 ID 저장
+    card.dataset.cardId = cardCount;
+
+    // ── innerHTML로 카드 내용 구성 ──────────
+    // (사용자 입력은 textContent로 처리하고,
+    //  레이아웃용 HTML만 innerHTML에 사용)
+    card.innerHTML = `
+      <button class="card-fav" title="즐겨찾기 토글">⭐</button>
+      <div class="card-title"></div>
+      <div class="card-body"></div>
+      <div class="card-footer">
+        <span class="card-id">#${cardCount}</span>
+        <button class="card-delete">삭제</button>
+      </div>
+    `;
+
+    // 사용자 입력은 textContent로 안전하게 삽입 (XSS 방지)
+    card.querySelector('.card-title').textContent = cardTitle;
+    card.querySelector('.card-body').textContent = cardBody;
+
+    // ── 삭제 버튼 이벤트 연결 ───────────────
+    const deleteBtn = card.querySelector('.card-delete');
+    deleteBtn.addEventListener('click', function() {
+      // removeChild 대신 remove()로 삭제
+      card.remove();
+      updateCounter();
+      toggleEmptyState();
+    });
+
+    // ── 즐겨찾기 토글 이벤트 ───────────────
+    const favBtn = card.querySelector('.card-fav');
+    favBtn.addEventListener('click', function() {
+      // classList.toggle로 즐겨찾기 상태 전환
+      const isFav = card.classList.toggle('favorited');
+      favBtn.textContent = isFav ? '⭐' : '☆';
+
+      // dataset에 상태 저장
+      card.dataset.favorited = isFav;
+    });
+
+    // ── 카드를 그리드에 추가 ─────────────────
+    const grid = document.getElementById('cardGrid');
+
+    // 빈 상태 메시지 숨기기
+    const emptyState = document.getElementById('emptyState');
+    if (emptyState) emptyState.style.display = 'none';
+
+    // appendChild로 그리드에 카드 추가
+    grid.appendChild(card);
+
+    // 입력창 초기화
+    titleInput.value = '';
+    bodyInput.value = '';
+    titleInput.focus();
+
+    // 카운터 업데이트
+    updateCounter();
+  }
+
+  /**
+   * 현재 카드 개수를 세어 카운터를 업데이트하는 함수
+   * querySelectorAll로 모든 카드 선택
+   */
+  function updateCounter() {
+    // querySelectorAll로 현재 화면의 모든 카드 선택
+    const cards = document.querySelectorAll('.card');
+    const counter = document.getElementById('counter');
+    counter.textContent = `카드 ${cards.length}개`;
+  }
+
+  /**
+   * 카드가 없을 때 빈 상태 메시지를 표시/숨기는 함수
+   */
+  function toggleEmptyState() {
+    const grid = document.getElementById('cardGrid');
+    const cards = grid.querySelectorAll('.card');
+    let emptyState = document.getElementById('emptyState');
+
+    if (cards.length === 0) {
+      // 빈 상태 메시지가 없으면 새로 생성
+      if (!emptyState) {
+        emptyState = document.createElement('div');
+        emptyState.id = 'emptyState';
+        emptyState.className = 'empty-state';
+        emptyState.textContent = '🃏 위에서 카드를 추가해보세요!';
+        grid.appendChild(emptyState);
+      } else {
+        emptyState.style.display = 'block';
+      }
+    }
+  }
+
+  /**
+   * 모든 카드를 삭제하는 함수
+   * querySelectorAll + forEach 활용
+   */
+  function clearAllCards() {
+    const cards = document.querySelectorAll('.card');
+    if (cards.length === 0) return;
+
+    // 모든 카드를 forEach로 순회하며 제거
+    cards.forEach(card => card.remove());
+
+    updateCounter();
+    toggleEmptyState();
+  }
+
+  // Enter 키로 카드 추가
+  ['cardTitle', 'cardBody'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') addCard();
+    });
+  });
+</script>
+
+</body>
+</html>

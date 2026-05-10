@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- 뷰포트 메타 태그: 반응형 웹의 필수 조건 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포트폴리오 — 반응형 과제 정답</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 헤더: 모바일에서는 세로, PC에서는 가로 -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo">김개발</a>
+      <nav class="nav">
+        <a href="#about" class="nav-link">소개</a>
+        <a href="#skills" class="nav-link">기술</a>
+        <a href="#portfolio" class="nav-link">포트폴리오</a>
+        <a href="#contact" class="nav-link">연락처</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- 히어로: 자기소개 -->
+    <section class="hero" id="about">
+      <div class="hero-inner">
+        <!-- 모바일: 아바타 위, PC: 왼쪽 -->
+        <div class="avatar-wrap">
+          <div class="avatar">K</div>
+        </div>
+        <div class="hero-text">
+          <p class="hero-greeting">안녕하세요!</p>
+          <h1 class="hero-name">저는 <span>김개발</span>입니다.</h1>
+          <p class="hero-role">프론트엔드 개발자 & CSS 학습자</p>
+          <p class="hero-desc">HTML, CSS, JavaScript를 공부하며 아름다운 웹을 만들어가고 있습니다. 사용자 경험을 중시하는 개발자가 되는 것이 목표입니다.</p>
+          <div class="hero-btns">
+            <a href="#portfolio" class="btn-primary">포트폴리오 보기</a>
+            <a href="#contact" class="btn-outline">연락하기</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+
+      <!-- 기술 스택 -->
+      <section class="section" id="skills">
+        <h2 class="section-title">기술 스택</h2>
+        <div class="skills-grid">
+          <div class="skill-card">
+            <div class="skill-icon bg-orange">H</div>
+            <h3>HTML</h3>
+            <p>시맨틱 마크업과 접근성을 고려한 구조 작성</p>
+            <div class="skill-bar">
+              <div class="skill-fill" style="width:90%"></div>
+            </div>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon bg-blue">C</div>
+            <h3>CSS</h3>
+            <p>Flexbox, Grid, 반응형, 애니메이션 구현</p>
+            <div class="skill-bar">
+              <div class="skill-fill" style="width:80%"></div>
+            </div>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon bg-yellow">JS</div>
+            <h3>JavaScript</h3>
+            <p>DOM 조작, 이벤트 처리, 기초 개발</p>
+            <div class="skill-bar">
+              <div class="skill-fill" style="width:60%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 포트폴리오 -->
+      <section class="section" id="portfolio">
+        <h2 class="section-title">포트폴리오</h2>
+        <p class="section-sub">창 너비를 바꿔보세요. 모바일(1열) → 태블릿(2열) → PC(3열)로 변합니다.</p>
+
+        <div class="portfolio-grid">
+          <article class="portfolio-card">
+            <div class="pcard-img pimg-1">
+              <div class="pcard-overlay">
+                <span class="pcard-tag">CSS</span>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <h3>CSS 선택자 실습</h3>
+              <p>다양한 CSS 선택자를 활용한 인터랙티브 데모 페이지</p>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="pcard-img pimg-2">
+              <div class="pcard-overlay">
+                <span class="pcard-tag">Flexbox</span>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <h3>Flexbox 레이아웃</h3>
+              <p>Flexbox를 활용한 네비게이션과 카드 레이아웃 구현</p>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="pcard-img pimg-3">
+              <div class="pcard-overlay">
+                <span class="pcard-tag">Grid</span>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <h3>CSS Grid 대시보드</h3>
+              <p>grid-template-areas로 만든 반응형 대시보드 UI</p>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="pcard-img pimg-4">
+              <div class="pcard-overlay">
+                <span class="pcard-tag">반응형</span>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <h3>반응형 포트폴리오</h3>
+              <p>모바일 퍼스트로 제작한 개인 포트폴리오 사이트</p>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="pcard-img pimg-5">
+              <div class="pcard-overlay">
+                <span class="pcard-tag">타이포그래피</span>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <h3>타이포그래피 시스템</h3>
+              <p>CSS 변수와 clamp()로 만든 유동적 타이포그래피</p>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="pcard-img pimg-6">
+              <div class="pcard-overlay">
+                <span class="pcard-tag">애니메이션</span>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <h3>버튼 & 애니메이션</h3>
+              <p>transition과 hover 효과를 활용한 인터랙티브 버튼</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 연락처 -->
+      <section class="section" id="contact">
+        <h2 class="section-title">연락처</h2>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <p>함께 일하고 싶으시거나 궁금한 점이 있으시면 언제든지 연락주세요.</p>
+            <ul class="contact-list">
+              <li>Email: hello@example.com</li>
+              <li>GitHub: github.com/example</li>
+              <li>Location: 서울, 대한민국</li>
+            </ul>
+          </div>
+          <div class="contact-form">
+            <input type="text" placeholder="이름" class="form-input">
+            <input type="email" placeholder="이메일" class="form-input">
+            <textarea placeholder="메시지" class="form-textarea" rows="4"></textarea>
+            <button class="form-btn">보내기</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="footer">
+    <p>&copy; 2025 김개발. CSS 강의 반응형 과제 정답</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>블로그 포스트 - HTML 텍스트 요소 예제</title>
+</head>
+<body>
+
+  <h1>웹 개발 시작하기: HTML이란 무엇인가?</h1>
+
+  <p>작성일: 2026년 5월 10일 | 작성자: 홍길동</p>
+
+  <hr>
+
+  <h2>들어가며</h2>
+
+  <p>
+    웹 개발을 처음 시작하는 분들이 가장 먼저 접하는 것이 바로 <strong>HTML</strong>입니다.
+    <abbr title="HyperText Markup Language">HTML</abbr>은 웹 페이지의 구조와 내용을 정의하는 언어로,
+    모든 웹 개발의 <em>출발점</em>이 됩니다.
+  </p>
+
+  <p>
+    이 글에서는 HTML이 무엇인지, 왜 중요한지,
+    그리고 어떻게 시작할 수 있는지에 대해 <strong>상세하게</strong> 설명해 드리겠습니다.
+  </p>
+
+  <hr>
+
+  <h2>HTML이란?</h2>
+
+  <p>
+    HTML은 <b>HyperText Markup Language</b>의 약자입니다.
+    이름에서 알 수 있듯이, HTML은 <em>프로그래밍 언어가 아니라</em> 마크업 언어입니다.
+    즉, 논리적인 계산이나 조건 처리를 하는 것이 아니라,
+    문서의 구조와 의미를 태그(tag)로 <strong>표시(mark up)</strong>하는 언어입니다.
+  </p>
+
+  <h3>HTML의 역사</h3>
+
+  <p>
+    HTML은 <time datetime="1991">1991년</time> 팀 버너스리(Tim Berners-Lee)에 의해 처음 만들어졌습니다.
+    현재 우리가 사용하는 버전은 <strong>HTML5</strong>로,
+    <time datetime="2014">2014년</time> <abbr title="World Wide Web Consortium">W3C</abbr>에 의해 표준화되었습니다.
+  </p>
+
+  <hr>
+
+  <h2>왜 HTML을 배워야 할까?</h2>
+
+  <p>
+    웹 개발자가 되고 싶다면 HTML은 <mark>절대적으로 필수</mark>입니다.
+    CSS와 JavaScript를 아무리 잘 알아도, HTML 없이는 웹 페이지를 만들 수 없습니다.
+  </p>
+
+  <blockquote cite="https://developer.mozilla.org/ko/docs/Learn/HTML">
+    <p>
+      "HTML은 웹을 이루는 가장 기초적인 구성 요소입니다.
+      HTML은 웹 콘텐츠의 의미와 구조를 정의할 때 사용합니다."
+    </p>
+    <footer>— <cite>MDN Web Docs</cite></footer>
+  </blockquote>
+
+  <p>
+    많은 개발자들이 <q>HTML은 하루만에 배울 수 있다</q>고 말하지만,
+    <em>올바르게</em> 사용하는 데는 꾸준한 연습이 필요합니다.
+  </p>
+
+  <hr>
+
+  <h2>HTML 코드 살펴보기</h2>
+
+  <p>
+    가장 기본적인 HTML 문서는 아래와 같이 생겼습니다.
+    <code>&lt;!DOCTYPE html&gt;</code>으로 시작해서
+    <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code> 태그로 구성됩니다.
+  </p>
+
+  <pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ko"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;페이지 제목&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;안녕하세요!&lt;/h1&gt;
+    &lt;p&gt;첫 번째 HTML 문서입니다.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+  </code></pre>
+
+  <p>이처럼 HTML 태그는 항상 <code>&lt;태그명&gt;</code>으로 시작해서 <code>&lt;/태그명&gt;</code>으로 끝납니다.</p>
+
+  <hr>
+
+  <h2>수학과 화학에서의 HTML 활용</h2>
+
+  <p>
+    HTML의 위첨자(<code>&lt;sup&gt;</code>)와 아래첨자(<code>&lt;sub&gt;</code>) 태그를 사용하면
+    수학 공식이나 화학식도 표현할 수 있습니다.
+  </p>
+
+  <h3>수학 공식</h3>
+  <p>피타고라스 정리: a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup></p>
+  <p>아인슈타인 방정식: E = mc<sup>2</sup></p>
+
+  <h3>화학식</h3>
+  <p>물: H<sub>2</sub>O</p>
+  <p>이산화탄소: CO<sub>2</sub></p>
+  <p>포도당: C<sub>6</sub>H<sub>12</sub>O<sub>6</sub></p>
+
+  <hr>
+
+  <h2>HTML 학습 로드맵</h2>
+
+  <p>HTML을 제대로 배우기 위한 순서를 정리했습니다:</p>
+
+  <p>
+    <del>처음에는 모든 태그를 외우려고 했지만</del>,
+    실제로는 자주 쓰이는 태그 20~30개만 알아도 충분합니다.
+    중요한 것은 <ins>필요할 때 찾아볼 수 있는 능력</ins>입니다.
+  </p>
+
+  <h3>단계별 학습 계획</h3>
+
+  <p>
+    <strong>1단계</strong>: HTML 기본 구조 이해<br>
+    <strong>2단계</strong>: 텍스트 관련 태그 익히기<br>
+    <strong>3단계</strong>: 링크와 이미지 사용하기<br>
+    <strong>4단계</strong>: 테이블과 폼 만들기<br>
+    <strong>5단계</strong>: 시맨틱 HTML로 구조 잡기
+  </p>
+
+  <hr>
+
+  <h2>마치며</h2>
+
+  <p>
+    HTML은 처음에는 어렵게 느껴질 수 있지만,
+    꾸준히 연습하다 보면 <mark>자연스럽게 손에 익게 됩니다</mark>.
+  </p>
+
+  <p>
+    가장 중요한 것은 <em>직접 코드를 작성해보는 것</em>입니다.
+    이 글을 읽는 것에서 그치지 말고, 지금 당장 에디터를 열고 HTML 파일을 만들어 보세요!
+  </p>
+
+  <blockquote>
+    <p>
+      "천 리 길도 한 걸음부터."
+    </p>
+    <footer>— <cite>한국 속담</cite></footer>
+  </blockquote>
+
+  <hr>
+
+  <p>
+    <i>이 글은 HTML 강의 예제용으로 작성된 블로그 포스트입니다.</i><br>
+    <small>© 2026 홍길동. 모든 권리 보유.</small>
+  </p>
+
+</body>
+</html>

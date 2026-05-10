@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>접근성 네비게이션 예제</title>
+    <style>
+        /* ── 기본 스타일 ── */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Noto Sans KR', sans-serif; line-height: 1.6; }
+
+        /* ── Skip Navigation Link
+           평소에는 숨겨두고, 포커스 받으면 화면에 표시
+           키보드 사용자가 반복 내비게이션을 건너뛸 수 있게 함 ── */
+        .skip-link {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            padding: 10px 20px;
+            background: #0066cc;
+            color: #fff;
+            font-weight: bold;
+            text-decoration: none;
+            z-index: 9999;
+            border-radius: 0 0 4px 0;
+        }
+        .skip-link:focus {
+            top: 0; /* 포커스 시 화면에 표시 */
+        }
+
+        /* ── 헤더 & 네비게이션 ── */
+        header {
+            background: #1a1a2e;
+            color: white;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo { font-size: 1.4rem; font-weight: bold; color: white; text-decoration: none; }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 4px;
+        }
+        nav a {
+            display: block;
+            padding: 8px 16px;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        nav a:hover,
+        nav a[aria-current="page"] {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        /* ── 포커스 스타일: 절대 outline: none 하지 말 것! ──
+           키보드 사용자가 현재 위치를 알 수 있어야 함 */
+        :focus-visible {
+            outline: 3px solid #ffdd57;
+            outline-offset: 2px;
+        }
+
+        /* ── 드롭다운 메뉴 ── */
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            color: #333;
+            min-width: 200px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            padding: 8px 0;
+            z-index: 100;
+        }
+        /* aria-expanded="true"일 때만 표시 */
+        .dropdown[aria-expanded="true"] .dropdown-menu {
+            display: block;
+        }
+        .dropdown-menu a {
+            color: #333;
+            border-radius: 0;
+        }
+        .dropdown-menu a:hover { background: #f0f0f0; }
+
+        /* ── 메인 콘텐츠 ── */
+        main { max-width: 900px; margin: 40px auto; padding: 0 24px; }
+        h1 { font-size: 2rem; margin-bottom: 16px; color: #1a1a2e; }
+        p { color: #555; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+    <!-- ── Skip Navigation: 키보드 사용자가 내비게이션을 건너뛸 수 있음 ── -->
+    <a href="#main-content" class="skip-link">본문 바로가기</a>
+
+    <!-- ── 헤더: role="banner"가 암묵적으로 부여됨 ── -->
+    <header>
+        <!-- 로고: 텍스트로 사이트 이름을 표현 (이미지 로고라면 alt 필요) -->
+        <a href="/" class="logo" aria-label="홈으로 이동">접근성 예제</a>
+
+        <!-- 메인 내비게이션: <nav>에 aria-label로 구분
+             (여러 nav가 있을 때 "메인 내비게이션", "푸터 내비게이션" 등으로 구분) -->
+        <nav aria-label="메인 내비게이션">
+            <ul role="list">
+                <li>
+                    <!-- aria-current="page": 현재 페이지임을 스크린리더에 알림 -->
+                    <a href="/" aria-current="page">홈</a>
+                </li>
+                <li>
+                    <a href="/about">소개</a>
+                </li>
+
+                <!-- ── 드롭다운 메뉴 ──
+                     aria-haspopup="true": 하위 메뉴가 있음을 알림
+                     aria-expanded: 열림/닫힘 상태
+                     aria-controls: 제어하는 요소의 ID -->
+                <li class="dropdown" id="services-dropdown">
+                    <button
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        aria-controls="services-menu"
+                        onclick="toggleDropdown('services-dropdown')"
+                        style="background:none;border:none;cursor:pointer;color:#ccc;padding:8px 16px;font-size:1rem;border-radius:4px;border:2px solid transparent;"
+                    >
+                        서비스 ▾
+                    </button>
+                    <ul id="services-menu" class="dropdown-menu" role="list">
+                        <li><a href="/services/web">웹 개발</a></li>
+                        <li><a href="/services/mobile">모바일 앱</a></li>
+                        <li><a href="/services/design">UI 디자인</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="/contact">연락처</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ── 메인 콘텐츠 ──
+         id="main-content": skip link의 대상
+         tabindex="-1": JS로 포커스 이동 가능 (Tab으로는 접근 안 함) -->
+    <main id="main-content" tabindex="-1">
+        <h1>접근성 네비게이션 예제</h1>
+        <p>
+            이 페이지는 키보드 내비게이션과 스크린리더를 완벽하게 지원하는
+            네비게이션 구현 예제입니다.
+        </p>
+        <p>
+            <strong>테스트 방법:</strong> Tab 키를 눌러 포커스를 이동해보세요.
+            상단의 "본문 바로가기" 링크가 먼저 표시됩니다.
+        </p>
+        <p>
+            드롭다운 메뉴는 Enter 또는 Space로 열고, Escape로 닫을 수 있습니다.
+        </p>
+    </main>
+
+    <script>
+        // ── 드롭다운 토글
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const button = dropdown.querySelector('button');
+            const isOpen = button.getAttribute('aria-expanded') === 'true';
+
+            // 모든 드롭다운 닫기
+            document.querySelectorAll('.dropdown').forEach(d => {
+                d.querySelector('button').setAttribute('aria-expanded', 'false');
+                d.removeAttribute('aria-expanded');
+            });
+
+            // 현재 드롭다운 토글
+            if (!isOpen) {
+                button.setAttribute('aria-expanded', 'true');
+                dropdown.setAttribute('aria-expanded', 'true');
+
+                // 드롭다운이 열리면 첫 번째 메뉴 아이템으로 포커스 이동
+                const firstItem = dropdown.querySelector('.dropdown-menu a');
+                if (firstItem) firstItem.focus();
+            }
+        }
+
+        // ── 키보드 이벤트 처리
+        document.addEventListener('keydown', (e) => {
+            // Escape: 모든 드롭다운 닫기
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.dropdown').forEach(d => {
+                    const button = d.querySelector('button');
+                    button.setAttribute('aria-expanded', 'false');
+                    d.removeAttribute('aria-expanded');
+                    // 드롭다운을 열었던 버튼으로 포커스 복귀
+                    button.focus();
+                });
+            }
+        });
+
+        // ── 드롭다운 외부 클릭 시 닫기
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(d => {
+                    d.querySelector('button').setAttribute('aria-expanded', 'false');
+                    d.removeAttribute('aria-expanded');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

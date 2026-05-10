@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>강의 02 — 제어문 예제</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f5f5f5;
+    }
+    h1 { color: #2c3e50; border-bottom: 3px solid #e74c3c; padding-bottom: 10px; }
+    h2 { color: #34495e; margin-top: 30px; }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    /* FizzBuzz 출력 박스 */
+    .fizzbuzz-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+    }
+    .fizz-item {
+      text-align: center;
+      padding: 6px 4px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      background: #ecf0f1;
+      color: #2c3e50;
+    }
+    .fizz-item.fizz { background: #3498db; color: white; }
+    .fizz-item.buzz { background: #e74c3c; color: white; }
+    .fizz-item.fizzbuzz { background: #9b59b6; color: white; }
+    /* 학점 판별 영역 */
+    .grade-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    input[type="number"] {
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 15px;
+      width: 100px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button:hover { background: #c0392b; }
+    .grade-result {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      display: none;
+    }
+    .legend {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+    }
+    .legend-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>강의 02 — 제어문 예제</h1>
+
+<!-- FizzBuzz 출력 -->
+<div class="card">
+  <h2>1. FizzBuzz (1~50)</h2>
+  <p>
+    3의 배수 → <strong style="color:#3498db">Fizz</strong> &nbsp;
+    5의 배수 → <strong style="color:#e74c3c">Buzz</strong> &nbsp;
+    15의 배수 → <strong style="color:#9b59b6">FizzBuzz</strong>
+  </p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-box" style="background:#3498db"></div> Fizz (3의 배수)</div>
+    <div class="legend-item"><div class="legend-box" style="background:#e74c3c"></div> Buzz (5의 배수)</div>
+    <div class="legend-item"><div class="legend-box" style="background:#9b59b6"></div> FizzBuzz (15의 배수)</div>
+    <div class="legend-item"><div class="legend-box" style="background:#ecf0f1;border:1px solid #ccc"></div> 일반 숫자</div>
+  </div>
+  <div class="fizzbuzz-grid" id="fizzbuzzGrid"></div>
+</div>
+
+<!-- 학점 판별기 -->
+<div class="card">
+  <h2>2. 점수 입력 → 학점 판별</h2>
+  <div class="grade-form">
+    <input type="number" id="scoreInput" placeholder="0~100" min="0" max="100">
+    <button onclick="checkGrade()">학점 확인</button>
+  </div>
+  <div class="grade-result" id="gradeResult"></div>
+  <!-- 학점 기준표 -->
+  <table style="width:100%;border-collapse:collapse;margin-top:15px;font-size:14px;">
+    <thead>
+      <tr style="background:#ecf0f1;">
+        <th style="padding:8px;border:1px solid #ddd;">학점</th>
+        <th style="padding:8px;border:1px solid #ddd;">점수 범위</th>
+        <th style="padding:8px;border:1px solid #ddd;">평점</th>
+      </tr>
+    </thead>
+    <tbody id="gradeTable"></tbody>
+  </table>
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  // 1. FizzBuzz 출력 (for 반복문 + if/else)
+  // ─────────────────────────────────────────
+
+  const grid = document.getElementById('fizzbuzzGrid');
+
+  // 1부터 50까지 반복
+  for (let i = 1; i <= 50; i++) {
+    const div = document.createElement('div');
+    div.className = 'fizz-item';
+
+    // 15의 배수 먼저 확인 (3과 5의 공배수)
+    if (i % 15 === 0) {
+      div.textContent = 'FizzBuzz';
+      div.classList.add('fizzbuzz');
+    } else if (i % 3 === 0) {
+      // 3의 배수
+      div.textContent = 'Fizz';
+      div.classList.add('fizz');
+    } else if (i % 5 === 0) {
+      // 5의 배수
+      div.textContent = 'Buzz';
+      div.classList.add('buzz');
+    } else {
+      // 일반 숫자
+      div.textContent = i;
+    }
+
+    grid.appendChild(div);
+  }
+
+  // ─────────────────────────────────────────
+  // 2. 학점 판별기 (if/else if + switch)
+  // ─────────────────────────────────────────
+
+  // 학점 기준 데이터
+  const gradeCriteria = [
+    { grade: 'A+', min: 95, max: 100, gpa: 4.5, color: '#27ae60' },
+    { grade: 'A',  min: 90, max: 94,  gpa: 4.0, color: '#2ecc71' },
+    { grade: 'B+', min: 85, max: 89,  gpa: 3.5, color: '#3498db' },
+    { grade: 'B',  min: 80, max: 84,  gpa: 3.0, color: '#5dade2' },
+    { grade: 'C+', min: 75, max: 79,  gpa: 2.5, color: '#f39c12' },
+    { grade: 'C',  min: 70, max: 74,  gpa: 2.0, color: '#e67e22' },
+    { grade: 'D+', min: 65, max: 69,  gpa: 1.5, color: '#e74c3c' },
+    { grade: 'D',  min: 60, max: 64,  gpa: 1.0, color: '#c0392b' },
+    { grade: 'F',  min: 0,  max: 59,  gpa: 0.0, color: '#7f8c8d' },
+  ];
+
+  // 학점 기준표 동적 생성
+  const tbody = document.getElementById('gradeTable');
+  for (const item of gradeCriteria) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="padding:7px;border:1px solid #ddd;text-align:center;font-weight:bold;color:${item.color}">${item.grade}</td>
+      <td style="padding:7px;border:1px solid #ddd;text-align:center">${item.min} ~ ${item.max}점</td>
+      <td style="padding:7px;border:1px solid #ddd;text-align:center">${item.gpa}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  /**
+   * 점수를 입력받아 학점을 판별하고 화면에 표시하는 함수
+   */
+  function checkGrade() {
+    const input = document.getElementById('scoreInput').value;
+    const resultDiv = document.getElementById('gradeResult');
+
+    // 입력값 유효성 검사
+    if (input === '') {
+      resultDiv.style.display = 'block';
+      resultDiv.style.background = '#fdecea';
+      resultDiv.style.color = '#e74c3c';
+      resultDiv.textContent = '점수를 입력해주세요.';
+      return;
+    }
+
+    const score = parseInt(input); // 정수로 변환
+
+    // 0~100 범위 확인
+    if (score < 0 || score > 100) {
+      resultDiv.style.display = 'block';
+      resultDiv.style.background = '#fdecea';
+      resultDiv.style.color = '#e74c3c';
+      resultDiv.textContent = '점수는 0~100 사이로 입력해주세요.';
+      return;
+    }
+
+    // 학점 판별 (if / else if 연속 사용)
+    let grade, gpa, color;
+
+    if (score >= 95) {
+      grade = 'A+'; gpa = 4.5; color = '#27ae60';
+    } else if (score >= 90) {
+      grade = 'A';  gpa = 4.0; color = '#2ecc71';
+    } else if (score >= 85) {
+      grade = 'B+'; gpa = 3.5; color = '#3498db';
+    } else if (score >= 80) {
+      grade = 'B';  gpa = 3.0; color = '#5dade2';
+    } else if (score >= 75) {
+      grade = 'C+'; gpa = 2.5; color = '#f39c12';
+    } else if (score >= 70) {
+      grade = 'C';  gpa = 2.0; color = '#e67e22';
+    } else if (score >= 65) {
+      grade = 'D+'; gpa = 1.5; color = '#e74c3c';
+    } else if (score >= 60) {
+      grade = 'D';  gpa = 1.0; color = '#c0392b';
+    } else {
+      grade = 'F';  gpa = 0.0; color = '#7f8c8d';
+    }
+
+    // 결과 출력 (템플릿 리터럴 활용)
+    resultDiv.style.display = 'block';
+    resultDiv.style.background = color + '22'; // 투명도 추가
+    resultDiv.style.color = color;
+    resultDiv.textContent = `${score}점 → ${grade}학점 (평점: ${gpa})`;
+  }
+
+  // Enter 키로도 학점 확인 가능
+  document.getElementById('scoreInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkGrade();
+  });
+</script>
+
+</body>
+</html>

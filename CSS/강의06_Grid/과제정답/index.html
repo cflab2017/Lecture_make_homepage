@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대시보드 레이아웃 — 과제 정답</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- grid-template-areas 레이아웃 -->
+  <div class="dashboard">
+
+    <!-- 헤더: grid-area: header -->
+    <header class="header">
+      <div class="header-logo">Dashboard</div>
+      <nav class="header-nav">
+        <a href="#">알림</a>
+        <a href="#">설정</a>
+        <div class="avatar">A</div>
+      </nav>
+    </header>
+
+    <!-- 사이드바: grid-area: sidebar -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">
+          <span class="nav-icon">■</span>
+          <span>대시보드</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">◆</span>
+          <span>통계</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">●</span>
+          <span>사용자</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">▲</span>
+          <span>보고서</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">★</span>
+          <span>설정</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 메인: grid-area: main -->
+    <main class="main">
+
+      <h1 class="main-title">안녕하세요, 관리자님 👋</h1>
+
+      <!-- 통계 카드 3개: 내부에서 Grid 사용 -->
+      <div class="stats-cards">
+
+        <div class="stat-card stat-blue">
+          <div class="stat-top">
+            <span class="stat-label">총 방문자</span>
+            <span class="stat-icon">👥</span>
+          </div>
+          <div class="stat-number">24,521</div>
+          <div class="stat-change positive">↑ 12.5% 지난주 대비</div>
+        </div>
+
+        <div class="stat-card stat-green">
+          <div class="stat-top">
+            <span class="stat-label">매출</span>
+            <span class="stat-icon">💰</span>
+          </div>
+          <div class="stat-number">₩4,280,000</div>
+          <div class="stat-change positive">↑ 8.2% 지난주 대비</div>
+        </div>
+
+        <div class="stat-card stat-purple">
+          <div class="stat-top">
+            <span class="stat-label">신규 가입</span>
+            <span class="stat-icon">✨</span>
+          </div>
+          <div class="stat-number">312</div>
+          <div class="stat-change negative">↓ 3.1% 지난주 대비</div>
+        </div>
+
+      </div>
+
+      <!-- 대형 콘텐츠 영역 -->
+      <div class="content-grid">
+
+        <!-- 차트 영역 (넓은 영역) -->
+        <div class="content-card chart-card">
+          <h3>방문자 추이</h3>
+          <!-- 실제 차트 대신 시각적 표현 -->
+          <div class="chart-bars">
+            <div class="bar" style="height:40%"><span>월</span></div>
+            <div class="bar" style="height:65%"><span>화</span></div>
+            <div class="bar" style="height:50%"><span>수</span></div>
+            <div class="bar" style="height:80%"><span>목</span></div>
+            <div class="bar" style="height:60%"><span>금</span></div>
+            <div class="bar" style="height:45%"><span>토</span></div>
+            <div class="bar" style="height:30%"><span>일</span></div>
+          </div>
+        </div>
+
+        <!-- 최근 활동 -->
+        <div class="content-card activity-card">
+          <h3>최근 활동</h3>
+          <ul class="activity-list">
+            <li class="activity-item">
+              <span class="activity-dot dot-blue"></span>
+              <div>
+                <p class="activity-text">새 사용자가 가입했습니다</p>
+                <p class="activity-time">5분 전</p>
+              </div>
+            </li>
+            <li class="activity-item">
+              <span class="activity-dot dot-green"></span>
+              <div>
+                <p class="activity-text">주문 #4521이 완료되었습니다</p>
+                <p class="activity-time">23분 전</p>
+              </div>
+            </li>
+            <li class="activity-item">
+              <span class="activity-dot dot-orange"></span>
+              <div>
+                <p class="activity-text">서버 점검 예정 알림</p>
+                <p class="activity-time">1시간 전</p>
+              </div>
+            </li>
+            <li class="activity-item">
+              <span class="activity-dot dot-purple"></span>
+              <div>
+                <p class="activity-text">새 보고서가 생성되었습니다</p>
+                <p class="activity-time">2시간 전</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- 푸터: grid-area: footer -->
+    <footer class="footer">
+      <p>Dashboard &copy; 2025 | CSS Grid로 만든 레이아웃</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>

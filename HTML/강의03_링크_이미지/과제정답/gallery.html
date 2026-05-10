@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<!-- HTML5 선언: 문서가 HTML5 형식임을 브라우저에 알립니다 -->
+<html lang="ko">
+<!-- lang="ko": 문서 언어를 한국어로 설정 -->
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 한글 깨짐 방지를 위한 UTF-8 인코딩 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 모바일 화면 대응을 위한 뷰포트 설정 -->
+  <title>내 즐겨찾기 링크 모음</title>
+  <!-- 브라우저 탭에 표시될 제목 -->
+</head>
+
+<body>
+
+  <!-- ====== 페이지 제목 ====== -->
+  <h1>나의 즐겨찾기 링크 모음</h1>
+  <!-- h1: 페이지의 메인 제목 (페이지당 1개 권장) -->
+
+  <p>
+    자주 방문하는 사이트들을 카테고리별로 정리했습니다.
+    궁금한 사이트를 클릭해서 바로 방문해 보세요!
+  </p>
+
+  <!-- ====== 페이지 내 이동 목차 ====== -->
+  <h2>카테고리 목차</h2>
+  <ul>
+    <!-- href="#id" 형식: 같은 페이지 내에서 해당 id를 가진 요소로 이동 -->
+    <li><a href="#news">뉴스 &amp; 정보</a></li>
+    <!-- &amp;: & 기호를 HTML에서 표현하는 특수 문자 (HTML 엔티티) -->
+    <li><a href="#dev">개발 &amp; 학습</a></li>
+    <li><a href="#entertainment">엔터테인먼트</a></li>
+    <li><a href="#shopping">쇼핑</a></li>
+    <li><a href="#contact">내 연락처</a></li>
+  </ul>
+
+  <hr>
+  <!-- hr: 목차와 본문 사이를 시각적으로 구분하는 수평선 -->
+
+  <!-- ============================== -->
+  <!-- 카테고리 1: 뉴스 & 정보        -->
+  <!-- ============================== -->
+  <!-- id="news": 위의 앵커 링크 <a href="#news">가 이 위치로 이동합니다 -->
+  <h2 id="news">뉴스 &amp; 정보</h2>
+
+  <!-- 사이트 1: 네이버 뉴스 -->
+  <h3>1. 네이버 뉴스</h3>
+
+  <!-- figure: 이미지와 캡션을 의미 있게 묶는 시맨틱 태그 -->
+  <figure>
+    <!-- a 태그 안에 img를 넣어 이미지 클릭 시 링크로 이동하게 함 -->
+    <a href="https://news.naver.com" target="_blank" rel="noopener noreferrer">
+      <!-- target="_blank": 새 탭에서 열기 -->
+      <!-- rel="noopener noreferrer": 새 탭 열기의 보안 취약점 방지 -->
+      <img
+        src="https://picsum.photos/seed/newspaper/500/300"
+        alt="네이버 뉴스 - 클릭하면 네이버 뉴스로 이동합니다"
+        width="500"
+        <!-- alt: 이미지를 설명하는 텍스트. 이미지 로딩 실패 시 또는 스크린리더가 읽음 -->
+        <!-- width: 이미지 너비를 픽셀 단위로 지정 (높이는 자동으로 비율 조정) -->
+      >
+    </a>
+    <!-- figcaption: figure 요소의 설명이나 캡션 -->
+    <figcaption>네이버 뉴스 - 국내 주요 언론사의 뉴스를 한곳에서 (클릭하면 이동)</figcaption>
+  </figure>
+
+  <p>
+    국내 최대 포털 사이트 네이버의 뉴스 서비스입니다.
+    정치, 경제, 사회, 문화 등 다양한 분야의 뉴스를 실시간으로 확인할 수 있습니다.
+    언론사별로 구독하는 기능도 있어서 관심 있는 뉴스만 골라 볼 수 있습니다.
+  </p>
+  <p>
+    <strong>추천 이유:</strong>
+    <a href="https://news.naver.com" target="_blank" rel="noopener noreferrer">
+      네이버 뉴스 바로가기 →
+    </a>
+    국내 뉴스를 빠르고 편리하게 확인할 수 있는 가장 접근성 좋은 서비스
+  </p>
+
+  <!-- 사이트 2: 위키피디아 -->
+  <h3>2. 위키백과</h3>
+
+  <figure>
+    <a href="https://ko.wikipedia.org" target="_blank" rel="noopener noreferrer">
+      <img
+        src="https://picsum.photos/seed/encyclopedia/500/300"
+        alt="위키백과 - 자유 백과사전 (클릭하면 위키백과로 이동)"
+        width="500"
+      >
+    </a>
+    <figcaption>위키백과 - 전 세계 누구나 편집할 수 있는 자유 백과사전</figcaption>
+  </figure>
+
+  <p>
+    위키백과는 전 세계의 자원봉사자들이 함께 만들어가는 무료 백과사전입니다.
+    궁금한 내용을 검색하면 방대한 정보를 얻을 수 있습니다.
+    한국어판은 약 60만 개 이상의 문서를 보유하고 있습니다.
+  </p>
+  <p>
+    <strong>추천 이유:</strong>
+    <a href="https://ko.wikipedia.org" target="_blank" rel="noopener noreferrer">
+      위키백과 바로가기 →
+    </a>
+    무료로 방대한 지식을 얻을 수 있는 최고의 정보 사이트
+  </p>
+
+  <!-- 맨 위로 이동하는 링크 -->
+  <p><a href="#">▲ 맨 위로 이동</a></p>
+  <!-- href="#" 는 페이지 맨 위로 이동합니다 -->
+
+  <hr>
+  <!-- hr: 카테고리 사이를 시각적으로 구분 -->
+
+  <!-- ============================== -->
+  <!-- 카테고리 2: 개발 & 학습        -->
+  <!-- ============================== -->
+  <h2 id="dev">개발 &amp; 학습</h2>
+
+  <!-- 사이트 3: MDN Web Docs -->
+  <h3>3. MDN Web Docs</h3>
+
+  <!-- figure와 figcaption으로 이미지와 캡션 묶기 -->
+  <figure>
+    <a href="https://developer.mozilla.org/ko/" target="_blank" rel="noopener noreferrer">
+      <img
+        src="https://picsum.photos/seed/coding/500/300"
+        alt="MDN Web Docs - 웹 개발 공식 문서 (클릭하면 MDN으로 이동)"
+        width="500"
+      >
+    </a>
+    <figcaption>MDN Web Docs - 웹 표준의 가장 신뢰할 수 있는 레퍼런스</figcaption>
+  </figure>
+
+  <p>
+    Mozilla에서 운영하는 웹 개발 공식 문서 사이트입니다.
+    HTML, CSS, JavaScript에 대한 가장 정확하고 상세한 정보를 제공합니다.
+    한국어 번역도 상당 부분 완료되어 있어 국내 개발자들도 많이 이용합니다.
+  </p>
+  <p>
+    <strong>추천 이유:</strong>
+    <a href="https://developer.mozilla.org/ko/" target="_blank" rel="noopener noreferrer">
+      MDN 바로가기 →
+    </a>
+    웹 개발을 공부한다면 반드시 알아야 할 가장 신뢰할 수 있는 공식 문서
+  </p>
+
+  <!-- 사이트 4: GitHub -->
+  <h3>4. GitHub</h3>
+
+  <figure>
+    <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+      <img
+        src="https://picsum.photos/seed/github/500/300"
+        alt="GitHub - 코드 저장 및 협업 플랫폼 (클릭하면 GitHub로 이동)"
+        width="500"
+      >
+    </a>
+    <figcaption>GitHub - 전 세계 개발자들의 코드 저장소이자 협업 공간</figcaption>
+  </figure>
+
+  <p>
+    전 세계에서 가장 많이 사용되는 코드 저장소 및 협업 플랫폼입니다.
+    Git을 기반으로 코드 버전 관리를 하고, 오픈소스 프로젝트에 기여할 수 있습니다.
+    무료로 공개 저장소를 무제한 생성할 수 있어 개발자의 포트폴리오로도 활용됩니다.
+  </p>
+  <p>
+    <strong>추천 이유:</strong>
+    <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+      GitHub 바로가기 →
+    </a>
+    개발자라면 반드시 사용해야 하는 코드 관리 및 포트폴리오 플랫폼
+  </p>
+
+  <p><a href="#">▲ 맨 위로 이동</a></p>
+
+  <hr>
+
+  <!-- ============================== -->
+  <!-- 카테고리 3: 엔터테인먼트        -->
+  <!-- ============================== -->
+  <h2 id="entertainment">엔터테인먼트</h2>
+
+  <!-- 사이트 5: YouTube -->
+  <h3>5. YouTube</h3>
+
+  <figure>
+    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+      <img
+        src="https://picsum.photos/seed/youtube/500/300"
+        alt="YouTube - 동영상 스트리밍 플랫폼 (클릭하면 YouTube로 이동)"
+        width="500"
+      >
+    </a>
+    <figcaption>YouTube - 전 세계 최대의 동영상 공유 플랫폼</figcaption>
+  </figure>
+
+  <p>
+    Google이 운영하는 세계 최대의 동영상 공유 플랫폼입니다.
+    음악, 영화, 교육, 게임 등 다양한 분야의 영상을 무료로 시청할 수 있습니다.
+    HTML, CSS 강의 등 IT 학습 콘텐츠도 매우 풍부합니다.
+  </p>
+  <p>
+    <strong>추천 이유:</strong>
+    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+      YouTube 바로가기 →
+    </a>
+    엔터테인먼트와 학습을 동시에 해결할 수 있는 최고의 영상 플랫폼
+  </p>
+
+  <p><a href="#">▲ 맨 위로 이동</a></p>
+
+  <hr>
+
+  <!-- ============================== -->
+  <!-- 카테고리 4: 쇼핑               -->
+  <!-- ============================== -->
+  <h2 id="shopping">쇼핑</h2>
+
+  <h3>6. 쿠팡</h3>
+
+  <figure>
+    <!-- 이미지를 링크로 만들기: a 태그 안에 img 태그를 넣음 -->
+    <a href="https://www.coupang.com" target="_blank" rel="noopener noreferrer">
+      <img
+        src="https://picsum.photos/seed/shopping/500/300"
+        alt="쿠팡 - 국내 최대 온라인 쇼핑몰 (클릭하면 쿠팡으로 이동)"
+        width="500"
+      >
+    </a>
+    <figcaption>쿠팡 - 로켓배송으로 유명한 국내 최대 온라인 쇼핑 플랫폼</figcaption>
+  </figure>
+
+  <p>
+    국내 최대 규모의 온라인 쇼핑 플랫폼입니다.
+    로켓배송 서비스로 주문 다음 날 새벽에도 상품을 받아볼 수 있습니다.
+    다양한 카테고리의 상품을 합리적인 가격에 구매할 수 있어 많은 사람들이 이용합니다.
+  </p>
+  <p>
+    <strong>추천 이유:</strong>
+    <a href="https://www.coupang.com" target="_blank" rel="noopener noreferrer">
+      쿠팡 바로가기 →
+    </a>
+    빠른 배송과 다양한 상품으로 쇼핑 편의성이 최고인 플랫폼
+  </p>
+
+  <p><a href="#">▲ 맨 위로 이동</a></p>
+
+  <hr>
+
+  <!-- ============================== -->
+  <!-- 연락처                         -->
+  <!-- ============================== -->
+  <h2 id="contact">내 연락처</h2>
+  <!-- id="contact": 목차의 <a href="#contact">이 이 위치로 이동 -->
+
+  <p>링크 추천이나 문의사항이 있으시면 아래로 연락해 주세요:</p>
+
+  <ul>
+    <li>
+      이메일:
+      <!-- mailto: 형식으로 이메일 링크 생성 -->
+      <!-- ?subject=제목&body=내용 으로 이메일 내용을 미리 채울 수도 있음 -->
+      <a href="mailto:hong@example.com?subject=즐겨찾기 링크 추천">
+        hong@example.com
+      </a>
+      (클릭하면 이메일 앱이 열립니다)
+    </li>
+    <li>
+      전화:
+      <!-- tel: 형식으로 전화 링크 생성. 모바일에서 클릭하면 전화 앱이 열림 -->
+      <a href="tel:010-1234-5678">010-1234-5678</a>
+      (모바일에서 클릭하면 전화 앱이 열립니다)
+    </li>
+    <li>
+      GitHub:
+      <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+        github.com/honggildong
+      </a>
+    </li>
+  </ul>
+
+  <p><a href="#">▲ 맨 위로 이동</a></p>
+
+</body>
+</html>

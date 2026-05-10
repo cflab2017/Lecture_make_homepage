@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>강의 01 — 변수와 타입 예제</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f5f5f5;
+    }
+    h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+    h2 { color: #34495e; margin-top: 30px; }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .result {
+      background: #eaf4fb;
+      border-left: 4px solid #3498db;
+      padding: 10px 15px;
+      margin: 8px 0;
+      border-radius: 0 4px 4px 0;
+      font-family: monospace;
+      font-size: 15px;
+    }
+    .label {
+      font-weight: bold;
+      color: #2980b9;
+      min-width: 200px;
+      display: inline-block;
+    }
+    .type-badge {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+    .warning { color: #e67e22; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>강의 01 — 변수와 타입 예제</h1>
+
+<!-- 섹션 1: 변수 선언 -->
+<div class="card">
+  <h2>1. 변수 선언 (var / let / const)</h2>
+  <div id="section1"></div>
+</div>
+
+<!-- 섹션 2: 원시 타입과 typeof -->
+<div class="card">
+  <h2>2. 원시 타입과 typeof</h2>
+  <div id="section2"></div>
+</div>
+
+<!-- 섹션 3: 형변환 -->
+<div class="card">
+  <h2>3. 형변환</h2>
+  <div id="section3"></div>
+</div>
+
+<!-- 섹션 4: 템플릿 리터럴과 계산 -->
+<div class="card">
+  <h2>4. 템플릿 리터럴과 계산 결과</h2>
+  <div id="section4"></div>
+</div>
+
+<script>
+  // 결과를 화면에 출력하는 헬퍼 함수
+  function addResult(containerId, label, value) {
+    const container = document.getElementById(containerId);
+    const div = document.createElement('div');
+    div.className = 'result';
+    div.innerHTML = `<span class="label">${label}</span> → ${value}`;
+    container.appendChild(div);
+  }
+
+  // ─────────────────────────────────────────
+  // 1. 변수 선언 예제
+  // ─────────────────────────────────────────
+  var oldStyle = "var로 선언한 변수";
+  let changeable = "let으로 선언한 변수";
+  const fixed = "const로 선언한 변수";
+
+  changeable = "값을 변경했습니다!"; // let은 재할당 가능
+
+  addResult('section1', 'var oldStyle', oldStyle);
+  addResult('section1', 'let changeable (변경 후)', changeable);
+  addResult('section1', 'const fixed', fixed);
+
+  // 블록 스코프 차이 시연
+  {
+    let blockScoped = "블록 안에서만 존재";
+    addResult('section1', 'let (블록 내부)', blockScoped);
+  }
+  // 이 시점에서 blockScoped는 접근 불가 → ReferenceError
+
+  // ─────────────────────────────────────────
+  // 2. 원시 타입과 typeof
+  // ─────────────────────────────────────────
+  const strValue = "안녕하세요";
+  const numValue = 42;
+  const floatValue = 3.14;
+  const boolTrue = true;
+  const boolFalse = false;
+  const nullValue = null;
+  let undefinedValue;
+  const nanValue = NaN;
+
+  addResult('section2', `"안녕하세요" → typeof`, `"${typeof strValue}" <span class="type-badge">string</span>`);
+  addResult('section2', `42 → typeof`, `"${typeof numValue}" <span class="type-badge">number</span>`);
+  addResult('section2', `3.14 → typeof`, `"${typeof floatValue}" <span class="type-badge">number</span>`);
+  addResult('section2', `true → typeof`, `"${typeof boolTrue}" <span class="type-badge">boolean</span>`);
+  addResult('section2', `false → typeof`, `"${typeof boolFalse}" <span class="type-badge">boolean</span>`);
+  addResult('section2', `null → typeof`, `"${typeof nullValue}" <span class="warning">⚠️ "object" ← JS의 유명한 버그!</span>`);
+  addResult('section2', `undefined → typeof`, `"${typeof undefinedValue}" <span class="type-badge">undefined</span>`);
+  addResult('section2', `NaN → typeof`, `"${typeof nanValue}" (숫자이지만 유효하지 않은 값)`);
+
+  // ─────────────────────────────────────────
+  // 3. 형변환
+  // ─────────────────────────────────────────
+
+  // 명시적 형변환
+  addResult('section3', 'String(42)', String(42));
+  addResult('section3', 'Number("42")', Number("42"));
+  addResult('section3', 'Number("abc")', Number("abc"));
+  addResult('section3', 'parseInt("42px")', parseInt("42px"));
+  addResult('section3', 'parseFloat("3.14abc")', parseFloat("3.14abc"));
+  addResult('section3', 'Boolean(0)', Boolean(0));
+  addResult('section3', 'Boolean("")', Boolean(""));
+  addResult('section3', 'Boolean("hello")', Boolean("hello"));
+  addResult('section3', 'Boolean(42)', Boolean(42));
+
+  // 암묵적 형변환
+  addResult('section3', '"5" + 3 (문자열 덧셈)', "5" + 3);
+  addResult('section3', '"5" - 3 (숫자 뺄셈)', "5" - 3);
+  addResult('section3', 'true + 1', true + 1);
+  addResult('section3', 'false + 1', false + 1);
+
+  // ─────────────────────────────────────────
+  // 4. 템플릿 리터럴과 계산
+  // ─────────────────────────────────────────
+  const myName = "홍길동";
+  const myAge = 25;
+  const birthYear = new Date().getFullYear() - myAge;
+
+  const greeting = `안녕하세요, ${myName}님!`;
+  const ageInfo = `나이: ${myAge}세 (출생연도: ${birthYear}년)`;
+
+  // 계산 결과를 화면에 출력
+  const width = 15;
+  const height = 8;
+  const area = width * height;
+  const perimeter = 2 * (width + height);
+
+  addResult('section4', '인사 메시지', greeting);
+  addResult('section4', '나이 정보', ageInfo);
+  addResult('section4', `사각형 넓이 (${width} × ${height})`, `${area}`);
+  addResult('section4', `사각형 둘레 (2 × (${width} + ${height}))`, `${perimeter}`);
+
+  // 원 계산
+  const PI = 3.14159;
+  const radius = 5;
+  const circleArea = (PI * radius * radius).toFixed(2);
+  const circumference = (2 * PI * radius).toFixed(2);
+
+  addResult('section4', `원의 넓이 (반지름=${radius})`, `${circleArea}`);
+  addResult('section4', `원의 둘레 (반지름=${radius})`, `${circumference}`);
+</script>
+
+</body>
+</html>

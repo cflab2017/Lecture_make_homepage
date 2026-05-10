@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>강의 07 — 이벤트 예제 (퀴즈 앱)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #1a1a2e;
+      color: white;
+    }
+    h1 { text-align: center; color: #e2b96f; margin-bottom: 30px; }
+    .quiz-card {
+      background: #16213e;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    /* 진행 바 */
+    .progress-bar-container {
+      background: #0f3460;
+      border-radius: 8px;
+      height: 8px;
+      margin-bottom: 20px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #e2b96f, #f39c12);
+      border-radius: 8px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    /* 질문 정보 */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #718096;
+      margin-bottom: 15px;
+    }
+    /* 질문 텍스트 */
+    .question-text {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 25px;
+      line-height: 1.5;
+      min-height: 60px;
+    }
+    /* 선택지 버튼들 */
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .option-btn {
+      padding: 14px 12px;
+      background: #0f3460;
+      color: white;
+      border: 2px solid #2d3748;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .option-btn:hover:not(:disabled) { background: #1a4a8a; border-color: #e2b96f; }
+    /* 정답 */
+    .option-btn.correct { background: #145a32; border-color: #27ae60; color: #2ecc71; }
+    /* 오답 */
+    .option-btn.wrong { background: #641e16; border-color: #e74c3c; color: #e74c3c; }
+    /* 피드백 */
+    .feedback {
+      text-align: center;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .feedback.correct-fb { background: #145a32; color: #2ecc71; }
+    .feedback.wrong-fb   { background: #641e16; color: #e74c3c; }
+    /* 다음 버튼 */
+    .next-btn {
+      width: 100%;
+      padding: 14px;
+      background: #e2b96f;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s;
+    }
+    .next-btn:hover { background: #c9a055; }
+    /* 결과 화면 */
+    .result-screen { text-align: center; display: none; }
+    .score-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 6px solid #e2b96f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .score-num { font-size: 40px; font-weight: bold; color: #e2b96f; }
+    .score-label { font-size: 14px; color: #718096; }
+    .score-msg { font-size: 18px; margin-bottom: 20px; }
+    .restart-btn {
+      padding: 14px 40px;
+      background: #e2b96f;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .restart-btn:hover { background: #c9a055; }
+    /* 키보드 힌트 */
+    .keyboard-hint {
+      text-align: center;
+      font-size: 12px;
+      color: #4a5568;
+      margin-top: 15px;
+    }
+    kbd {
+      background: #2d3748;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🧠 JavaScript 퀴즈</h1>
+
+<div class="quiz-card" id="quizCard">
+  <!-- 진행 바 -->
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- 질문 정보 -->
+  <div class="quiz-header">
+    <span id="questionNum">문제 1 / 5</span>
+    <span id="scoreDisplay">점수: 0</span>
+  </div>
+
+  <!-- 질문 텍스트 -->
+  <div class="question-text" id="questionText"></div>
+
+  <!-- 선택지 버튼 (이벤트 위임 적용) -->
+  <div class="options" id="optionsContainer"></div>
+
+  <!-- 피드백 메시지 -->
+  <div class="feedback" id="feedback"></div>
+
+  <!-- 다음 문제 버튼 -->
+  <button class="next-btn" id="nextBtn">다음 문제 →</button>
+
+  <!-- 키보드 힌트 -->
+  <div class="keyboard-hint" id="keyboardHint">
+    <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> 키로 답 선택 가능
+  </div>
+
+  <!-- 결과 화면 (처음에는 숨김) -->
+  <div class="result-screen" id="resultScreen">
+    <div class="score-circle">
+      <div class="score-num" id="finalScore"></div>
+      <div class="score-label">/ 5점</div>
+    </div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <button class="restart-btn" onclick="restartQuiz()">다시 도전하기</button>
+  </div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  // 퀴즈 데이터
+  // ─────────────────────────────────────────
+  const questions = [
+    {
+      question: "JavaScript에서 변수를 선언할 때 재할당이 불가능한 키워드는?",
+      options: ["var", "let", "const", "function"],
+      answer: 2  // 인덱스 (0부터 시작)
+    },
+    {
+      question: "다음 중 JavaScript의 원시 타입(Primitive Type)이 아닌 것은?",
+      options: ["string", "number", "array", "boolean"],
+      answer: 2
+    },
+    {
+      question: "배열에서 마지막 요소를 제거하고 반환하는 메서드는?",
+      options: ["shift()", "pop()", "slice()", "splice()"],
+      answer: 1
+    },
+    {
+      question: "null과 undefined의 관계로 옳은 것은?",
+      options: ["null === undefined", "null == undefined", "null !== undefined는 false", "둘 다 같은 타입"],
+      answer: 1
+    },
+    {
+      question: "`typeof null`의 결과값은?",
+      options: ["'null'", "'undefined'", "'object'", "'boolean'"],
+      answer: 2
+    },
+  ];
+
+  // ─────────────────────────────────────────
+  // 퀴즈 상태 변수
+  // ─────────────────────────────────────────
+  let currentIndex = 0;  // 현재 문제 번호 (0부터 시작)
+  let score = 0;          // 현재 점수
+  let answered = false;   // 현재 문제 답변 여부
+
+  // ─────────────────────────────────────────
+  // 문제 렌더링
+  // ─────────────────────────────────────────
+
+  /**
+   * 현재 문제를 화면에 렌더링하는 함수
+   */
+  function renderQuestion() {
+    const q = questions[currentIndex];
+    answered = false;
+
+    // 진행 바 업데이트 (currentIndex + 1) / 전체 문제 수 × 100
+    const progress = ((currentIndex) / questions.length) * 100;
+    document.getElementById('progressBar').style.width = `${progress}%`;
+
+    // 문제 번호 및 점수 업데이트 (textContent 사용)
+    document.getElementById('questionNum').textContent = `문제 ${currentIndex + 1} / ${questions.length}`;
+    document.getElementById('scoreDisplay').textContent = `점수: ${score}`;
+
+    // 질문 텍스트 설정 (textContent: 안전하게 텍스트만 삽입)
+    document.getElementById('questionText').textContent = q.question;
+
+    // 선택지 버튼 생성 (innerHTML로 레이아웃 구성)
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = q.options.map((opt, i) => `
+      <button class="option-btn" data-index="${i}">
+        ${i + 1}. ${opt}
+      </button>
+    `).join('');
+
+    // 피드백 숨기기
+    const feedback = document.getElementById('feedback');
+    feedback.style.display = 'none';
+    feedback.className = 'feedback';
+
+    // 다음 버튼 숨기기
+    document.getElementById('nextBtn').style.display = 'none';
+
+    // 키보드 힌트 보이기
+    document.getElementById('keyboardHint').style.display = 'block';
+  }
+
+  // ─────────────────────────────────────────
+  // 이벤트 위임: 선택지 클릭 처리
+  // ─────────────────────────────────────────
+
+  /**
+   * 선택지 컨테이너에 이벤트 위임을 설정하는 함수
+   * 부모 요소 하나에 이벤트를 등록하여 모든 버튼 클릭 처리
+   */
+  const optionsContainer = document.getElementById('optionsContainer');
+
+  // 이벤트 위임: 컨테이너에 한 번만 이벤트 등록
+  optionsContainer.addEventListener('click', function(event) {
+    // event.target: 실제 클릭된 요소 확인
+    const clickedBtn = event.target.closest('.option-btn');
+    if (!clickedBtn || answered) return; // 버튼이 아니거나 이미 답변했으면 무시
+
+    // dataset.index로 선택된 옵션 번호 읽기
+    const selectedIndex = parseInt(clickedBtn.dataset.index);
+    checkAnswer(selectedIndex);
+  });
+
+  // ─────────────────────────────────────────
+  // 답 확인 함수
+  // ─────────────────────────────────────────
+
+  /**
+   * 선택한 답을 확인하고 피드백을 표시하는 함수
+   * @param {number} selectedIndex - 선택된 옵션의 인덱스
+   */
+  function checkAnswer(selectedIndex) {
+    if (answered) return; // 이미 답변했으면 무시
+    answered = true;
+
+    const q = questions[currentIndex];
+    const isCorrect = selectedIndex === q.answer;
+
+    // 점수 증가
+    if (isCorrect) score++;
+
+    // 모든 버튼 비활성화 + 정답/오답 표시
+    const buttons = optionsContainer.querySelectorAll('.option-btn');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true; // 비활성화
+
+      if (i === q.answer) {
+        btn.classList.add('correct'); // 정답 버튼 초록색
+      } else if (i === selectedIndex && !isCorrect) {
+        btn.classList.add('wrong'); // 틀린 버튼 빨간색
+      }
+    });
+
+    // 피드백 메시지 표시
+    const feedback = document.getElementById('feedback');
+    feedback.style.display = 'block';
+
+    if (isCorrect) {
+      feedback.textContent = '✅ 정답입니다!';
+      feedback.className = 'feedback correct-fb';
+    } else {
+      feedback.textContent = `❌ 오답! 정답: ${q.options[q.answer]}`;
+      feedback.className = 'feedback wrong-fb';
+    }
+
+    // 점수 업데이트
+    document.getElementById('scoreDisplay').textContent = `점수: ${score}`;
+
+    // 다음 버튼 표시
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.style.display = 'block';
+
+    // 마지막 문제이면 버튼 텍스트 변경
+    if (currentIndex === questions.length - 1) {
+      nextBtn.textContent = '결과 보기 🏆';
+    } else {
+      nextBtn.textContent = '다음 문제 →';
+    }
+
+    // 키보드 힌트 숨기기
+    document.getElementById('keyboardHint').style.display = 'none';
+  }
+
+  // ─────────────────────────────────────────
+  // 다음 문제 이벤트
+  // ─────────────────────────────────────────
+
+  /**
+   * 다음 버튼 클릭 핸들러
+   */
+  document.getElementById('nextBtn').addEventListener('click', function() {
+    currentIndex++;
+
+    if (currentIndex < questions.length) {
+      renderQuestion(); // 다음 문제 렌더링
+    } else {
+      showResult(); // 결과 화면 표시
+    }
+  });
+
+  // ─────────────────────────────────────────
+  // 키보드 이벤트: 숫자 키로 답 선택
+  // ─────────────────────────────────────────
+
+  /**
+   * 키보드 이벤트 핸들러
+   * 1~4 키로 선택지 선택, Enter로 다음 문제 이동
+   */
+  document.addEventListener('keydown', function(event) {
+    // event.key로 눌린 키 확인
+    const key = event.key;
+
+    // 1~4 키: 해당 선택지 선택
+    if (['1', '2', '3', '4'].includes(key) && !answered) {
+      const index = parseInt(key) - 1; // '1' → 0, '2' → 1 ...
+      if (index < questions[currentIndex].options.length) {
+        checkAnswer(index);
+      }
+    }
+
+    // Enter 키: 다음 문제로 (답변 후에만)
+    if (key === 'Enter' && answered) {
+      document.getElementById('nextBtn').click();
+    }
+  });
+
+  // ─────────────────────────────────────────
+  // 결과 화면
+  // ─────────────────────────────────────────
+
+  /**
+   * 퀴즈 완료 후 결과 화면을 표시하는 함수
+   */
+  function showResult() {
+    // 퀴즈 콘텐츠 숨기기
+    document.getElementById('questionNum').style.display = 'none';
+    document.getElementById('scoreDisplay').style.display = 'none';
+    document.getElementById('questionText').style.display = 'none';
+    document.getElementById('optionsContainer').style.display = 'none';
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('keyboardHint').style.display = 'none';
+
+    // 진행바 100%
+    document.getElementById('progressBar').style.width = '100%';
+
+    // 결과 화면 표시
+    const resultScreen = document.getElementById('resultScreen');
+    resultScreen.style.display = 'block';
+
+    // 점수 표시
+    document.getElementById('finalScore').textContent = score;
+
+    // 점수에 따른 메시지
+    let msg;
+    if (score === 5)      msg = '🏆 완벽! 모두 맞혔습니다!';
+    else if (score >= 4)  msg = '🥇 훌륭합니다! 거의 다 맞혔어요!';
+    else if (score >= 3)  msg = '🥈 좋아요! 조금만 더 공부해봐요!';
+    else if (score >= 2)  msg = '🥉 아쉽네요. 다시 도전해보세요!';
+    else                  msg = '💪 처음부터 다시 공부해봐요!';
+
+    document.getElementById('scoreMsg').textContent = msg;
+  }
+
+  /**
+   * 퀴즈를 처음부터 다시 시작하는 함수
+   */
+  function restartQuiz() {
+    currentIndex = 0;
+    score = 0;
+    answered = false;
+
+    // 숨겼던 요소들 다시 표시
+    ['questionNum', 'scoreDisplay', 'questionText', 'optionsContainer'].forEach(id => {
+      document.getElementById(id).style.display = '';
+    });
+
+    document.getElementById('resultScreen').style.display = 'none';
+
+    renderQuestion(); // 첫 문제 렌더링
+  }
+
+  // ─────────────────────────────────────────
+  // 초기 실행
+  // ─────────────────────────────────────────
+  renderQuestion();
+</script>
+
+</body>
+</html>

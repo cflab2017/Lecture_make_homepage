@@ -1,0 +1,54 @@
+// ============================================
+// 강의05 예제: Prisma 스키마 — User-Post 1:N 관계
+// ============================================
+// 이 파일을 수정한 뒤:
+//   npx prisma migrate dev --name 변경내용
+// 실행하면 DB 테이블이 자동으로 갱신됩니다.
+// ============================================
+
+// Prisma Client 생성 설정
+generator client {
+    provider = "prisma-client-js"
+}
+
+// 데이터베이스 연결 설정
+// SQLite 사용: .env 파일에서 DATABASE_URL을 읽어옴
+// .env 예시: DATABASE_URL="file:./dev.db"
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────
+// User 모델 (users 테이블에 매핑)
+// ─────────────────────────────────────────
+model User {
+    id        Int      @id @default(autoincrement()) // 기본키, 자동 증가
+    email     String   @unique                       // 이메일, 중복 불가
+    name      String                                 // 이름
+    bio       String?                                // 자기소개 (선택, ?는 nullable)
+    posts     Post[]                                 // 1:N 관계 — 한 유저는 여러 포스트
+    createdAt DateTime @default(now())               // 가입일시 (자동)
+
+    @@map("users") // 실제 테이블명을 "users"로 지정 (기본은 "User")
+}
+
+// ─────────────────────────────────────────
+// Post 모델 (posts 테이블에 매핑)
+// ─────────────────────────────────────────
+model Post {
+    id        Int      @id @default(autoincrement()) // 기본키, 자동 증가
+    title     String                                 // 포스트 제목
+    content   String                                 // 포스트 내용
+    published Boolean  @default(false)              // 공개 여부 (기본: 비공개)
+    viewCount Int      @default(0)                  // 조회수
+
+    // 관계 정의: authorId가 User.id를 참조 (외래키)
+    author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    authorId  Int      // 외래키 컬럼
+
+    createdAt DateTime @default(now())               // 작성일시 (자동)
+    updatedAt DateTime @updatedAt                    // 수정일시 (수정 시 자동 갱신)
+
+    @@map("posts")
+}

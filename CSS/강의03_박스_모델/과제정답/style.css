@@ -1,0 +1,163 @@
+/* =============================================
+   카드 컴포넌트 — 과제 정답
+   강의 03: 박스 모델 (padding / border / margin)
+   ============================================= */
+
+/* 전체 선택자: box-sizing: border-box 전체 적용
+   이렇게 하면 width가 항상 실제 크기와 일치합니다. */
+* {
+  box-sizing: border-box; /* padding과 border를 width에 포함 */
+  margin: 0;              /* 기본 margin 제거 */
+  padding: 0;             /* 기본 padding 제거 */
+}
+
+/* body: 전체 페이지 배경과 폰트 */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif; /* 기본 폰트 */
+  background-color: #f0f2f5;                   /* 밝은 회색 배경 */
+  color: #333;
+  padding: 40px 20px;                          /* 위아래 40px, 좌우 20px 여백 */
+  min-height: 100vh;                           /* 최소 높이: 화면 전체 */
+}
+
+/* 페이지 제목 */
+.page-title {
+  text-align: center;       /* 가운데 정렬 */
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 8px;       /* 아래 margin으로 부제목과 간격 */
+}
+
+/* 부제목 */
+.page-subtitle {
+  text-align: center;
+  color: #777;
+  font-size: 0.95rem;
+  margin-bottom: 40px;      /* 카드와의 위 margin */
+}
+
+/* =============================================
+   카드 3개를 감싸는 래퍼
+   ============================================= */
+.cards-wrapper {
+  display: flex;            /* 카드를 가로로 배치 */
+  justify-content: center;  /* 가운데 정렬 */
+  gap: 24px;                /* 카드 사이 간격 (margin 대신 gap 사용) */
+  flex-wrap: wrap;          /* 화면이 좁으면 줄바꿈 */
+  max-width: 1100px;        /* 최대 너비 */
+  margin: 0 auto;           /* 좌우 auto → 수평 중앙 배치 */
+}
+
+/* =============================================
+   카드: 박스 모델의 핵심 적용 영역
+   ============================================= */
+.card {
+  /* 너비 */
+  width: 300px;             /* 카드 너비 고정 */
+
+  /* 테두리 */
+  border: 1px solid #e0e0e0; /* 얇은 회색 테두리 */
+  border-radius: 14px;       /* 모서리 둥글게 (14px) */
+
+  /* 배경 */
+  background-color: white;   /* 흰 배경 */
+
+  /* margin: 카드 자체의 바깥 여백 (gap으로 대체) */
+  /* gap이 있어서 margin은 따로 설정하지 않음 */
+
+  /* overflow: border-radius가 자식 요소에도 적용되게 */
+  overflow: hidden;           /* 이미지가 모서리 밖으로 나오지 않게 잘라냄 */
+
+  /* 그림자: border 대신 시각적 깊이감 추가 */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  /* 호버 애니메이션 준비 */
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+/* 카드 호버: 위로 살짝 올라오며 그림자 진해짐 */
+.card:hover {
+  transform: translateY(-6px);                    /* 위로 6px 이동 */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);  /* 그림자 강조 */
+}
+
+/* =============================================
+   카드 이미지 영역
+   실제 img 태그 대신 배경색으로 이미지 역할 대체
+   ============================================= */
+.card-image {
+  height: 180px;             /* 이미지 영역 높이 */
+  width: 100%;               /* 카드 너비에 꽉 채움 */
+  /* border-radius는 부모(card)의 overflow:hidden으로 처리 */
+}
+
+/* 파랑 계열 이미지 배경 */
+.card-image-blue {
+  background: linear-gradient(135deg, #3498db, #2980b9); /* 그라데이션 */
+}
+
+/* 초록 계열 이미지 배경 */
+.card-image-green {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+/* 보라 계열 이미지 배경 */
+.card-image-purple {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+/* =============================================
+   카드 본문 영역 (card-body)
+   padding으로 내용과 테두리 사이에 여백을 줍니다.
+   ============================================= */
+.card-body {
+  padding: 24px;             /* 상하좌우 24px 안쪽 여백 (padding) */
+}
+
+/* 카드 이름: 제목 */
+.card-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 4px;        /* 이름과 직책 사이 margin */
+}
+
+/* 카드 직책 */
+.card-role {
+  font-size: 0.85rem;
+  color: #3498db;             /* 파랑으로 강조 */
+  font-weight: 600;
+  margin-bottom: 12px;        /* 직책과 설명 사이 margin */
+  text-transform: uppercase;  /* 대문자 */
+  letter-spacing: 0.5px;
+}
+
+/* 카드 설명 텍스트 */
+.card-desc {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.6;           /* 줄 간격으로 가독성 확보 */
+  margin-bottom: 16px;        /* 설명과 태그 사이 margin */
+}
+
+/* =============================================
+   태그 영역
+   ============================================= */
+.card-tags {
+  display: flex;              /* 태그들을 가로로 배치 */
+  gap: 8px;                   /* 태그 사이 간격 */
+  flex-wrap: wrap;            /* 태그가 많으면 줄바꿈 */
+}
+
+/* 개별 태그: display: inline-block + padding + border-radius */
+.tag {
+  display: inline-block;      /* 나란히 배치 + width/height 설정 가능 */
+  padding: 4px 12px;          /* 상하 4px, 좌우 12px 내부 여백 (padding) */
+  border: 1px solid #e0e0e0; /* 얇은 테두리 (border) */
+  border-radius: 20px;        /* 둥근 pill 모양 */
+  background-color: #f8f9fa;  /* 연한 회색 배경 */
+  font-size: 0.78rem;
+  color: #555;
+  font-weight: 600;
+  /* margin 없음: 부모의 gap으로 간격 처리 */
+}

@@ -1,0 +1,273 @@
+/* =============================================
+   브랜드 색상 팔레트 — 과제 정답
+   강의 02: CSS 변수, 폰트, 색상 표현법 활용
+   ============================================= */
+
+/* =============================================
+   CSS 변수 선언
+   :root에 선언하면 파일 전체에서 재사용 가능
+   ============================================= */
+:root {
+  --color-main:       #6c5ce7;   /* 메인 브랜드 색상: 보라 계열 */
+  --color-sub:        #00cec9;   /* 보조 색상: 청록 계열 */
+  --color-accent:     #fd79a8;   /* 강조 색상: 핑크 계열 */
+  --color-background: #f8f7ff;   /* 배경색: 매우 연한 보라빛 흰색 */
+  --color-text:       #2d3436;   /* 글자색: 부드러운 짙은 회색 */
+  --color-muted:      #636e72;   /* 보조 글자색: 중간 회색 */
+  --color-white:      #ffffff;   /* 흰색 */
+
+  --font-display: 'Montserrat', sans-serif;       /* 제목용 영문 폰트 */
+  --font-body:    'Noto Sans KR', sans-serif;     /* 본문 한글 폰트 */
+
+  --radius-card:  12px;          /* 카드 모서리 반경 */
+  --shadow-card:  0 4px 16px rgba(108, 92, 231, 0.12); /* 카드 그림자 */
+}
+
+/* =============================================
+   기본 초기화
+   ============================================= */
+* {
+  box-sizing: border-box; /* 패딩/테두리를 너비에 포함 */
+  margin: 0;              /* 기본 여백 제거 */
+  padding: 0;             /* 기본 패딩 제거 */
+}
+
+/* body: 변수로 배경색과 폰트 설정 */
+body {
+  font-family: var(--font-body);           /* 한글 폰트 */
+  background-color: var(--color-background); /* 배경색 변수 */
+  color: var(--color-text);               /* 글자색 변수 */
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* =============================================
+   브랜드 헤더
+   ============================================= */
+.brand-header {
+  background-color: var(--color-main); /* 메인 색상 변수 */
+  color: var(--color-white);           /* 흰색 변수 */
+  text-align: center;
+  padding: 60px 20px;
+}
+
+/* 라벨: 작고 넓은 글자 간격 */
+.brand-label {
+  font-family: var(--font-display);  /* 디스플레이 폰트 */
+  font-size: 0.8rem;
+  letter-spacing: 6px;               /* 넓은 글자 간격 */
+  text-transform: uppercase;         /* 대문자 변환 */
+  opacity: 0.75;                     /* 살짝 투명하게 */
+  margin-bottom: 16px;
+}
+
+/* 브랜드 이름: 가장 큰 제목 */
+.brand-name {
+  font-family: var(--font-display);  /* 영문 폰트 */
+  font-size: 3.5rem;
+  font-weight: 900;                  /* 가장 굵게 */
+  letter-spacing: -1px;             /* 약간 좁은 글자 간격 */
+  margin-bottom: 12px;
+}
+
+/* 브랜드 설명 */
+.brand-desc {
+  font-size: 1rem;
+  opacity: 0.85;
+  font-weight: 300;                  /* 가는 굵기 */
+}
+
+/* =============================================
+   컨테이너
+   ============================================= */
+.container {
+  max-width: 960px;       /* 최대 너비 */
+  margin: 0 auto;         /* 좌우 자동 여백으로 중앙 배치 */
+  padding: 40px 20px;
+}
+
+/* =============================================
+   팔레트 카드 그리드
+   ============================================= */
+.palette {
+  display: flex;          /* 가로 배치 */
+  gap: 16px;              /* 카드 사이 간격 */
+  flex-wrap: wrap;        /* 화면이 좁으면 줄바꿈 */
+  margin-bottom: 50px;
+}
+
+/* 색상 카드 */
+.color-card {
+  flex: 1;                           /* 동등한 너비로 분배 */
+  min-width: 160px;                  /* 최소 너비 */
+  border-radius: var(--radius-card); /* 변수로 모서리 */
+  box-shadow: var(--shadow-card);    /* 변수로 그림자 */
+  background-color: var(--color-white);
+  overflow: hidden;                  /* 자식 요소가 둥근 모서리 밖으로 나오지 않게 */
+  transition: transform 0.25s;       /* 호버 시 부드럽게 올라오는 효과 */
+}
+
+/* 카드 호버: 살짝 위로 이동 */
+.color-card:hover {
+  transform: translateY(-6px);       /* 위로 6px 이동 */
+}
+
+/* 색상 블록: 위쪽 색상 영역 */
+.color-block {
+  height: 130px;                     /* 색상 블록 높이 */
+}
+
+/* 각 카드의 색상 블록에 CSS 변수 적용 */
+.block-main       { background-color: var(--color-main); }
+.block-sub        { background-color: var(--color-sub); }
+.block-accent     { background-color: var(--color-accent); }
+.block-background {
+  background-color: var(--color-background);
+  border: 1px solid #ddd;           /* 밝은 배경이므로 테두리로 구분 */
+}
+.block-text       { background-color: var(--color-text); }
+
+/* 카드 정보 영역 */
+.color-info {
+  padding: 16px;                     /* 내부 여백 */
+}
+
+/* 색상 이름: 굵게 */
+.color-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text);         /* 텍스트 색상 변수 */
+  margin-bottom: 4px;
+}
+
+/* 색상 값: 코드 스타일 */
+.color-value {
+  font-family: 'Courier New', monospace; /* 고정폭 폰트 */
+  font-size: 0.8rem;
+  color: var(--color-main);         /* 메인 색상으로 강조 */
+  margin-bottom: 8px;
+}
+
+/* 색상 설명 */
+.color-desc {
+  font-size: 0.78rem;
+  color: var(--color-muted);        /* 흐린 색상 변수 */
+  line-height: 1.5;
+}
+
+/* =============================================
+   섹션 공통
+   ============================================= */
+.section-title {
+  font-family: var(--font-display); /* 디스플레이 폰트 */
+  font-size: 1.4rem;
+  color: var(--color-main);         /* 메인 색상 변수 */
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
+}
+
+/* =============================================
+   버튼 활용 예시
+   ============================================= */
+.usage-section {
+  background-color: var(--color-white);
+  border-radius: var(--radius-card);
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 30px;
+}
+
+.usage-demo {
+  display: flex;          /* 버튼 가로 배치 */
+  gap: 12px;              /* 버튼 사이 간격 */
+  flex-wrap: wrap;        /* 줄바꿈 허용 */
+}
+
+/* 버튼 공통 스타일 */
+.btn {
+  padding: 10px 24px;             /* 상하 10px, 좌우 24px 여백 */
+  border-radius: 6px;             /* 둥근 모서리 */
+  font-family: var(--font-body);  /* 폰트 변수 */
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;  /* 기본 테두리 투명 */
+  transition: opacity 0.2s;       /* 호버 시 투명도 변화 */
+}
+
+.btn:hover { opacity: 0.8; }     /* 호버 시 살짝 투명해짐 */
+
+/* 메인 버튼: CSS 변수 활용 */
+.btn-main {
+  background-color: var(--color-main);  /* 메인 색상 배경 */
+  color: var(--color-white);
+}
+
+/* 보조 버튼: CSS 변수 활용 */
+.btn-sub {
+  background-color: var(--color-sub);   /* 보조 색상 배경 */
+  color: var(--color-white);
+}
+
+/* 강조 버튼: CSS 변수 활용 */
+.btn-accent {
+  background-color: var(--color-accent); /* 강조 색상 배경 */
+  color: var(--color-white);
+}
+
+/* 아웃라인 버튼: 배경 없이 테두리만 */
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--color-main);      /* 테두리에 메인 색상 */
+  color: var(--color-main);
+}
+
+/* =============================================
+   폰트 쇼케이스
+   ============================================= */
+.font-section {
+  background-color: var(--color-white);
+  border-radius: var(--radius-card);
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+}
+
+/* 디스플레이 텍스트: 가장 큰 제목용 */
+.type-display {
+  font-family: var(--font-display);  /* 영문 폰트 */
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--color-main);          /* 메인 색상 */
+  letter-spacing: 4px;               /* 넓은 글자 간격 */
+  text-transform: uppercase;         /* 대문자 */
+  margin-bottom: 12px;
+}
+
+/* 소제목 */
+.type-heading {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+/* 본문 텍스트 */
+.type-body {
+  font-size: 1rem;
+  color: var(--color-muted);         /* 흐린 회색 */
+  line-height: 1.9;                  /* 넓은 줄 간격으로 가독성 향상 */
+  letter-spacing: 0.2px;             /* 약간 넓은 글자 간격 */
+}
+
+/* =============================================
+   푸터
+   ============================================= */
+.page-footer {
+  background-color: var(--color-text);  /* 텍스트 색상(짙은 회색)을 배경으로 */
+  color: rgba(255, 255, 255, 0.6);     /* 반투명 흰색 */
+  text-align: center;
+  padding: 24px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;                  /* 약간 넓은 간격 */
+}
