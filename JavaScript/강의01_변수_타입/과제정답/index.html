@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과제 01 정답 — 온도 단위 변환기</title>
+  <style>
+    /* 전체 페이지 스타일 */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 500px;
+      margin: 60px auto;
+      padding: 0 20px;
+      background: #f0f4f8;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    /* 입력 카드 스타일 */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* 입력 그룹 스타일 */
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    /* 포커스 시 테두리 색 변경 */
+    input[type="number"]:focus {
+      border-color: #3498db;
+    }
+
+    select {
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+      cursor: pointer;
+    }
+
+    /* 변환 버튼 스타일 */
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #2980b9; /* 마우스 올렸을 때 색상 변화 */
+    }
+
+    /* 결과 출력 영역 */
+    .result-area {
+      margin-top: 20px;
+      display: none; /* 처음에는 숨김 */
+    }
+
+    /* 결과 제목 */
+    .result-title {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-bottom: 10px;
+    }
+
+    /* 각 온도 결과 박스 */
+    .temp-result {
+      background: #eaf4fb;
+      border-left: 4px solid #3498db;
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 17px;
+      font-family: monospace;
+    }
+
+    /* 에러 메시지 스타일 */
+    .error {
+      background: #fdecea;
+      border-left: 4px solid #e74c3c;
+      color: #c0392b;
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🌡️ 온도 단위 변환기</h1>
+
+<div class="card">
+  <!-- 입력 영역 -->
+  <div class="input-group">
+    <!-- 온도 값 입력창 -->
+    <input type="number" id="tempInput" placeholder="온도 입력" step="any">
+    <!-- 단위 선택 드롭다운 -->
+    <select id="unitSelect">
+      <option value="C">°C (섭씨)</option>
+      <option value="F">°F (화씨)</option>
+      <option value="K">K (켈빈)</option>
+    </select>
+  </div>
+
+  <!-- 변환 버튼 -->
+  <button onclick="convert()">변환하기</button>
+
+  <!-- 결과 출력 영역 (처음에는 숨겨져 있음) -->
+  <div class="result-area" id="resultArea"></div>
+</div>
+
+<script>
+  /**
+   * 변환하기 버튼 클릭 시 실행되는 함수
+   * 입력값을 검증하고 세 가지 단위로 변환하여 화면에 출력한다.
+   */
+  function convert() {
+    // 결과 출력 영역 요소를 가져온다
+    const resultArea = document.getElementById('resultArea');
+
+    // 입력된 온도 값을 문자열로 가져온다
+    const rawInput = document.getElementById('tempInput').value;
+
+    // 선택된 단위를 가져온다 ('C', 'F', 'K' 중 하나)
+    const unit = document.getElementById('unitSelect').value;
+
+    // ── 입력값 유효성 검사 ──────────────────────────────
+
+    // 입력값이 비어 있는지 확인
+    if (rawInput === '') {
+      showError(resultArea, '온도 값을 입력해주세요.');
+      return; // 이후 코드 실행 중단
+    }
+
+    // 문자열을 부동소수점 숫자로 변환
+    const inputValue = parseFloat(rawInput);
+
+    // 숫자가 아닌 값이 입력된 경우 확인
+    if (isNaN(inputValue)) {
+      showError(resultArea, '올바른 숫자를 입력해주세요.');
+      return;
+    }
+
+    // 켈빈은 0 미만이 될 수 없음 (절대영도 = 0 K)
+    if (unit === 'K' && inputValue < 0) {
+      showError(resultArea, '켈빈은 0 이상이어야 합니다. (절대영도: 0 K = -273.15°C)');
+      return;
+    }
+
+    // ── 섭씨 기준으로 통일하여 계산 ────────────────────
+
+    // 입력값을 먼저 섭씨(°C)로 변환한다
+    let celsius; // 섭씨 값을 저장할 변수 (let: 단위에 따라 값이 달라짐)
+
+    if (unit === 'C') {
+      // 섭씨 입력 → 그대로 사용
+      celsius = inputValue;
+    } else if (unit === 'F') {
+      // 화씨 → 섭씨: (°F - 32) × 5/9
+      celsius = (inputValue - 32) * 5 / 9;
+    } else {
+      // 켈빈 → 섭씨: K - 273.15
+      celsius = inputValue - 273.15;
+    }
+
+    // ── 섭씨에서 다른 단위로 변환 ──────────────────────
+
+    // 섭씨 값 (소수점 2자리)
+    const celsiusResult = celsius.toFixed(2);
+
+    // 섭씨 → 화씨: (°C × 9/5) + 32
+    const fahrenheitResult = (celsius * 9 / 5 + 32).toFixed(2);
+
+    // 섭씨 → 켈빈: °C + 273.15
+    const kelvinResult = (celsius + 273.15).toFixed(2);
+
+    // ── 결과를 화면에 출력 ──────────────────────────────
+
+    // 선택된 단위 이름을 한국어로 표시
+    const unitNames = { C: '섭씨(°C)', F: '화씨(°F)', K: '켈빈(K)' };
+
+    // 결과 영역을 보이게 설정
+    resultArea.style.display = 'block';
+
+    // 템플릿 리터럴을 사용하여 결과 HTML 생성
+    resultArea.innerHTML = `
+      <div class="result-title">입력값: ${inputValue} ${unitNames[unit]}</div>
+      <div class="temp-result">🌡️ 섭씨(°C): <strong>${celsiusResult} °C</strong></div>
+      <div class="temp-result">🌡️ 화씨(°F): <strong>${fahrenheitResult} °F</strong></div>
+      <div class="temp-result">🌡️ 켈빈(K): <strong>${kelvinResult} K</strong></div>
+    `;
+  }
+
+  /**
+   * 에러 메시지를 화면에 출력하는 헬퍼 함수
+   * @param {HTMLElement} container - 결과를 표시할 DOM 요소
+   * @param {string} message - 표시할 에러 메시지
+   */
+  function showError(container, message) {
+    // 결과 영역을 보이게 설정
+    container.style.display = 'block';
+    // 에러 메시지를 빨간 박스로 표시
+    container.innerHTML = `<div class="error">⚠️ ${message}</div>`;
+  }
+
+  // Enter 키를 눌렀을 때도 변환이 실행되도록 이벤트 등록
+  document.getElementById('tempInput').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') { // 누른 키가 Enter인지 확인
+      convert(); // 변환 함수 호출
+    }
+  });
+</script>
+
+</body>
+</html>

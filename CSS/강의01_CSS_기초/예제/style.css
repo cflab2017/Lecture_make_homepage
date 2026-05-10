@@ -1,0 +1,175 @@
+/* =============================================
+   CSS 기초 — 선택자 실습 예제
+   ============================================= */
+
+/* 전체 선택자: 모든 요소의 기본 여백 초기화 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 태그 선택자: body 전체에 적용 */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 16px;
+  color: #333;
+  background-color: #f5f5f5;
+  line-height: 1.7;
+}
+
+/* ID 선택자: #main-header */
+#main-header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+#main-header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+/* 태그 선택자: 모든 h2 */
+h2 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 12px;
+  border-left: 4px solid #3498db;
+  padding-left: 10px;
+}
+
+/* 태그 선택자: 모든 p */
+p {
+  margin-bottom: 10px;
+}
+
+/* 클래스 선택자: .section */
+.section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin: 16px auto;
+  max-width: 800px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* 클래스 선택자: .highlight */
+.highlight {
+  background-color: #fff3cd;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* 다중 클래스: .highlight.warning */
+.highlight.warning {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 3px solid #f5c6cb;
+}
+
+/* ID 선택자: #special */
+#special {
+  color: #8e44ad;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+/* 자손 선택자: .parent 안의 모든 p */
+.parent p {
+  color: #27ae60;
+  background-color: #eafaf1;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+/* 자식 선택자: .parent의 직계 자식 p만 */
+.parent > p {
+  border-left: 4px solid #27ae60;
+  font-weight: bold;
+}
+
+/* 가상 클래스: 리스트 항목들 */
+.pseudo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.pseudo-list li {
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* 가상 클래스: 첫 번째 자식 */
+.pseudo-list li:first-child {
+  background-color: #d5f5e3;
+  color: #1e8449;
+  font-weight: bold;
+}
+
+/* 가상 클래스: 마지막 자식 */
+.pseudo-list li:last-child {
+  background-color: #fde8d8;
+  color: #a04000;
+  font-weight: bold;
+}
+
+/* 가상 클래스: n번째 자식 */
+.pseudo-list li:nth-child(3) {
+  background-color: #d6eaf8;
+  color: #1a5276;
+}
+
+/* 가상 클래스: 링크 기본 */
+a {
+  color: #2980b9;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* 가상 클래스: 링크 호버 */
+a:hover {
+  color: #e74c3c;
+  text-decoration: underline;
+}
+
+/* 우선순위 데모 */
+/* 태그 선택자: 1점 */
+p.priority-demo {
+  color: green; /* 클래스와 합산 11점 */
+}
+
+/* ID 선택자: 100점 → 최종 승자 */
+#priority-id {
+  color: #e74c3c;
+  font-size: 1rem;
+  padding: 12px;
+  background-color: #fef9e7;
+  border: 2px dashed #f39c12;
+  border-radius: 4px;
+}
+
+/* ID 선택자: #main-footer */
+#main-footer {
+  background-color: #2c3e50;
+  color: #aab7b8;
+  text-align: center;
+  padding: 20px;
+  margin-top: 30px;
+  font-size: 0.9rem;
+}
+
+/* 코드 태그 스타일 */
+code {
+  background-color: #ecf0f1;
+  color: #c0392b;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
